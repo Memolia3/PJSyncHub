@@ -1,43 +1,76 @@
-mod routes;
+mod configs;
 mod handlers;
-mod models;
-mod error;
+mod migrations;
+mod schemas;
 
+use crate::migrations::Migrator;
+use async_graphql::*;
 use axum::{
+    extract::Extension,
+    response::IntoResponse,
     routing::{get, post},
     Router,
-    Json,
-    extract::State,
 };
+use configs::{database::DatabasePool, env::Env};
+use handlers::graphql::graphql_handler;
+use schemas::{Mutation, Query};
+use sea_orm_migration::MigratorTrait;
+use tokio::net::TcpListener;
 use tower_http::cors::CorsLayer;
-use std::sync::Arc;
+use tracing::{error, info, warn, Level};
+use tracing_subscriber::FmtSubscriber;
+
+async fn health_check() -> impl IntoResponse {
+    "OK"
+}
 
 #[tokio::main]
-async fn main() {
-    // ロギングの初期化
-    tracing_subscriber::fmt::init();
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // 開発環境用ロガーの初期化
+    FmtSubscriber::builder()
+        .with_max_level(Level::DEBUG)
+        .with_file(true)
+        .with_line_number(true)
+        .with_thread_ids(true)
+        .with_target(false)
+        .with_ansi(true)
+        .pretty()
+        .init();
 
-    // アプリケーションの状態を管理
-    let state = Arc::new(AppState {
-        // 必要な共有状態をここに
-    });
+    // 環境変数の初期化
+    let env = Env::new()?;
+    info!("Environment loaded");
 
-    let app = Router::new()
-        .route("/health", get(routes::health::check))
-        .route("/api/users", get(routes::users::list_users))
-        .route("/api/users", post(routes::users::create_user))
-        .layer(CorsLayer::permissive()) // 開発環境用
-        .with_state(state);
+    // DB接続プールの初期化
+    info!("Connecting to databases...");
+    let db = DatabasePool::new(&env).await?;
+    info!("Database connections established");
 
-    let addr = "0.0.0.0:8080";
-    tracing::info!("Server starting on {}", addr);
+    // マイグレーションの実行
+    info!("Running database migrations...");
+    if let Err(e) = Migrator::up(&db.db, None).await {
+        error!("Migration failed: {:?}", e);
+        return Err(e.into());
+    }
+    info!("Migrations completed successfully");
 
-    axum::serve(
-        tokio::net::TcpListener::bind(addr)
-            .await
-            .expect("Failed to bind"),
-        app
-    )
-    .await
-    .expect("Failed to start server");
+    // GraphQLスキーマの構築
+    info!("Building GraphQL schema...");
+    let schema = Schema::build(Query, Mutation, EmptySubscription)
+        .data(db.clone())
+        .finish();
+    info!("GraphQL schema ready");
+
+    let app: Router = Router::new()
+        .route("/", get(health_check))
+        .route("/graphql", get(graphql_handler).post(graphql_handler))
+        .layer(Extension(schema))
+        .layer(CorsLayer::permissive());
+
+    // サーバーの起動
+    info!("Starting server on 0.0.0.0:8080");
+    let listener = TcpListener::bind("0.0.0.0:8080").await?;
+    axum::serve(listener, app).await?;
+
+    Ok(())
 }

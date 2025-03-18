@@ -1,5 +1,10 @@
-FROM rust:1.76 AS builder
+FROM rust:1.81.0-slim AS builder
 WORKDIR /usr/src/app
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    pkg-config \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
 COPY . .
 RUN cargo install --path .
 
