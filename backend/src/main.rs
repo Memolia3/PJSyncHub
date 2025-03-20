@@ -1,6 +1,7 @@
 mod configs;
 mod handlers;
 mod migrations;
+mod models;
 mod schemas;
 
 use crate::migrations::Migrator;
@@ -11,8 +12,8 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use configs::{database::DatabasePool, env::Env};
-use handlers::graphql::graphql_handler;
+use configs::{database::DatabasePool, env::Env, storage::StorageClient};
+use handlers::graphql::{graphql_handler, graphql_playground};
 use schemas::{Mutation, Query};
 use sea_orm_migration::MigratorTrait;
 use tokio::net::TcpListener;
@@ -56,14 +57,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // GraphQLスキーマの構築
     info!("Building GraphQL schema...");
-    let schema = Schema::build(Query, Mutation, EmptySubscription)
-        .data(db.clone())
+    let schema = Schema::build(Query::default(), Mutation::default(), EmptySubscription)
+        .data(db.db.clone())
+        .data(db.document_db.clone())
+        .data(StorageClient::new(&env.minio_endpoint, &env.minio_user, &env.minio_password).await?)
         .finish();
     info!("GraphQL schema ready");
 
     let app: Router = Router::new()
         .route("/", get(health_check))
-        .route("/graphql", get(graphql_handler).post(graphql_handler))
+        .route("/graphql", post(graphql_handler))
+        .route("/graphql", get(graphql_playground))
         .layer(Extension(schema))
         .layer(CorsLayer::permissive());
 

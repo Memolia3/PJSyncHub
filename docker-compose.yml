@@ -1,4 +1,3 @@
-name: pj-sync-hub
 services:
   frontend:
     build:
@@ -6,18 +5,22 @@ services:
       dockerfile: Dockerfile
     container_name: frontend
     ports:
-      - "${FRONTEND_PORT}:3000"
+      - "${FRONTEND_PORT:-3000}:3000"
     volumes:
       - ./frontend:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
-      - NEXT_PUBLIC_GRAPHQL_URL=http://backend:${BACKEND_PORT}/graphql
+      - NEXT_PUBLIC_GRAPHQL_URL=http://backend:${BACKEND_PORT:-8080}/graphql
       - TZ=Asia/Tokyo
     depends_on:
       - backend
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://localhost:${FRONTEND_PORT:-3000} || exit 1",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -29,18 +32,17 @@ services:
       dockerfile: Dockerfile
     container_name: backend
     ports:
-      - "${BACKEND_PORT}:8080"
+      - "${BACKEND_PORT:-8080}:8080"
     volumes:
       - ./backend:/usr/src/app
       - cargo-cache:/usr/local/cargo/registry
       - target-cache:/usr/src/app/target
-    restart: always
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
       - DOCUMENT_DB_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017
-      - MINIO_PORT=${MINIO_PORT}
+      - MINIO_PORT=${MINIO_PORT:-9000}
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - TZ=Asia/Tokyo
@@ -49,7 +51,7 @@ services:
       postgres:
         condition: service_healthy
       mongo:
-        condition: service_started
+        condition: service_healthy
       minio:
         condition: service_healthy
 
@@ -70,11 +72,12 @@ services:
     volumes:
       - db-main-data:/var/lib/postgresql/data
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
 
   mongo:
     image: mongo:6
     container_name: db_sub
+    command: mongod --port 27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -82,21 +85,23 @@ services:
     volumes:
       - db-sub-data:/data/db
     ports:
-      - "${MONGO_PORT}:27017"
+      - "${MONGO_PORT:-27017}:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
 
   minio:
     image: minio/minio
     container_name: minio
     ports:
-      - "${MINIO_PORT}:9000"
-      - "${MINIO_CONSOLE_PORT}:9001"
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
     volumes:
       - minio-data:/data
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-      MINIO_BROWSER_REDIRECT_URL: http://localhost:${MINIO_CONSOLE_PORT}
-    command: server /data --console-address ":${MINIO_CONSOLE_PORT}"
+      MINIO_BROWSER_REDIRECT_URL: http://localhost:${MINIO_CONSOLE_PORT:-9001}/
+    command: server /data --console-address ":9001"
     healthcheck:
       test: ["CMD", "mc", "ready", "local"]
       interval: 10s
@@ -110,3 +115,8 @@ volumes:
   db-main-data:
   db-sub-data:
   minio-data:
+
+networks:
+  default:
+    name: app-network
+    driver: bridge
