@@ -1,0 +1,14 @@
+mutation CreateTestUser {
+  createUser(
+    input: {
+      email: "test@example.com"
+      name: "Test User"
+      password: "password123"
+    }
+  ) {
+    id
+    name
+    email
+    avatarUrl
+  }
+}

@@ -8,6 +8,7 @@ pub struct Env {
     pub minio_endpoint: String,
     pub minio_user: String,
     pub minio_password: String,
+    pub jwt_secret: String,
 }
 
 /// 環境変数の新規作成
@@ -33,6 +34,7 @@ impl Env {
         let minio_user = env::var("MINIO_ROOT_USER")?;
         // Minioのパスワード
         let minio_password = env::var("MINIO_ROOT_PASSWORD")?;
+        let jwt_secret = env::var("JWT_SECRET")?;
 
         // 環境変数の返却
         Ok(Self {
@@ -41,6 +43,7 @@ impl Env {
             minio_endpoint,
             minio_user,
             minio_password,
+            jwt_secret,
         })
     }
 }

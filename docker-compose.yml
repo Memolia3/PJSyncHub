@@ -45,6 +45,7 @@ services:
       - MINIO_PORT=${MINIO_PORT:-9000}
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
       - TZ=Asia/Tokyo
       - RUST_BACKTRACE=1
     depends_on:

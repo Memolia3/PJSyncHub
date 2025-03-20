@@ -1,8 +1,16 @@
+use crate::configs::env::Env;
 use crate::configs::storage::StorageClient;
 use crate::models::relational_db::user::{self, Entity as User};
+use argon2::{
+    password_hash::{rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
+    Argon2,
+};
 use async_graphql::*;
+use jsonwebtoken::{encode, EncodingKey, Header};
 use sea_orm::*;
+use serde::{Deserialize, Serialize};
 use std::io::Read;
+use std::sync::Arc;
 use uuid::Uuid;
 
 /// userテーブルの入力
@@ -53,11 +61,20 @@ impl UserMutation {
     /// ユーザを作成
     async fn create_user(&self, ctx: &Context<'_>, input: CreateUserInput) -> Result<user::Model> {
         let db = ctx.data::<DatabaseConnection>()?;
+
+        // パスワードのハッシュ化
+        let salt = SaltString::generate(&mut OsRng);
+        let argon2 = Argon2::default();
+        let password_hash = argon2
+            .hash_password(input.password.as_bytes(), &salt)
+            .map_err(|e| Error::new(format!("Password hashing failed: {}", e)))?
+            .to_string();
+
         let user = user::ActiveModel {
             id: Set(Uuid::new_v4()),
             email: Set(input.email),
             name: Set(input.name),
-            password: Set(input.password),
+            password: Set(password_hash),
             ..Default::default()
         };
         let user = user.insert(db).await?;
@@ -96,4 +113,66 @@ impl UserMutation {
         let user = user.update(db).await?;
         Ok(user)
     }
+
+    /// ログイン
+    async fn login(&self, ctx: &Context<'_>, input: LoginInput) -> Result<LoginResponse> {
+        let db = ctx.data::<DatabaseConnection>()?;
+        let env = ctx.data::<Arc<Env>>()?;
+
+        // ユーザーを検索
+        let user = User::find()
+            .filter(user::Column::Email.eq(input.email))
+            .one(db)
+            .await?
+            .ok_or_else(|| Error::new("Invalid credentials"))?;
+
+        // パスワードの検証
+        let parsed_hash = PasswordHash::new(&user.password)
+            .map_err(|e| Error::new(format!("Invalid password hash: {}", e)))?;
+
+        if Argon2::default()
+            .verify_password(input.password.as_bytes(), &parsed_hash)
+            .is_err()
+        {
+            return Err(Error::new("Invalid credentials"));
+        }
+
+        // JWTトークンの生成
+        let expiration = chrono::Utc::now()
+            .checked_add_signed(chrono::Duration::hours(24))
+            .expect("valid timestamp")
+            .timestamp() as usize;
+
+        let claims = Claims {
+            sub: user.id,
+            exp: expiration,
+        };
+
+        let token = encode(
+            &Header::default(),
+            &claims,
+            &EncodingKey::from_secret(env.jwt_secret.as_bytes()),
+        )
+        .map_err(|e| Error::new(format!("Token generation failed: {}", e)))?;
+
+        Ok(LoginResponse { token, user })
+    }
+}
+
+#[derive(InputObject)]
+struct LoginInput {
+    email: String,
+    password: String,
+}
+
+#[derive(SimpleObject)]
+struct LoginResponse {
+    token: String,
+    user: user::Model,
+}
+
+#[derive(Serialize, Deserialize)]
+struct Claims {
+    sub: uuid::Uuid, // ユーザーID
+    exp: usize,      // 有効期限
 }

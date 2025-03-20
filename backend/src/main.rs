@@ -20,6 +20,7 @@ use tokio::net::TcpListener;
 use tower_http::cors::CorsLayer;
 use tracing::{error, info, warn, Level};
 use tracing_subscriber::FmtSubscriber;
+use std::sync::Arc;
 
 /// ヘルスチェック
 async fn health_check() -> impl IntoResponse {
@@ -63,6 +64,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .data(db.relational_db.clone())
         .data(db.content_db.clone())
         .data(StorageClient::new(&env.minio_endpoint, &env.minio_user, &env.minio_password).await?)
+        .data(Arc::new(env))
         .finish();
     info!("GraphQL schema ready");
 
