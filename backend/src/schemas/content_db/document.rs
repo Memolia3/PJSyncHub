@@ -1,26 +1,35 @@
-use crate::models::document_db::document::DocumentModel;
+use crate::models::content_db::document::DocumentModel;
 use async_graphql::*;
 use mongodb::Database;
 use serde::{Deserialize, Serialize};
 
+/// documentテーブルの出力
 #[derive(SimpleObject, Serialize, Deserialize)]
 pub struct DocumentOutput {
+    /// タイトル
     pub title: String,
+    /// 内容
     pub content: String,
 }
 
+/// documentテーブルの入力
 #[derive(InputObject)]
 pub struct DocumentInput {
+    /// タイトル
     pub title: String,
+    /// 内容
     pub content: String,
 }
 
+/// documentテーブルのクエリ
 #[derive(Default)]
 pub struct DocumentQuery;
 
+/// documentテーブルのミューテーション
 #[derive(Default)]
 pub struct DocumentMutation;
 
+/// documentテーブルのクエリの実装
 #[Object]
 impl DocumentQuery {
     async fn documents(&self, ctx: &Context<'_>) -> Result<Vec<DocumentOutput>> {
@@ -36,6 +45,7 @@ impl DocumentQuery {
     }
 }
 
+/// documentテーブルのミューテーションの実装
 #[Object]
 impl DocumentMutation {
     async fn create_document(

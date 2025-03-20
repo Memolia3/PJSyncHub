@@ -2,6 +2,7 @@ use aws_config::BehaviorVersion;
 use aws_sdk_s3::{config::Credentials, primitives::ByteStream, Client};
 use thiserror::Error;
 
+/// ストレージエラー
 #[derive(Error, Debug)]
 pub enum StorageError {
     #[error("S3 error: {0}")]
@@ -12,16 +13,19 @@ pub enum StorageError {
     Stream(#[from] aws_sdk_s3::primitives::ByteStreamError),
 }
 
+/// ストレージクライアント
 pub struct StorageClient {
     pub s3: Client,
 }
 
+/// ストレージクライアントの新規作成
 impl StorageClient {
     pub async fn new(
         endpoint: &str,
         access_key: &str,
         secret_key: &str,
     ) -> Result<Self, StorageError> {
+        // ストレージクライアントの設定
         let config = aws_config::defaults(BehaviorVersion::latest())
             .endpoint_url(endpoint)
             .region("ap-northeast-1")
@@ -31,10 +35,14 @@ impl StorageClient {
             .load()
             .await;
 
+        // ストレージクライアントの作成
         let s3 = Client::new(&config);
+
+        // ストレージクライアントの返却
         Ok(Self { s3 })
     }
 
+    /// ファイルのアップロード
     pub async fn upload_file(
         &self,
         bucket: &str,
@@ -51,6 +59,7 @@ impl StorageClient {
         Ok(())
     }
 
+    /// ファイルの取得
     pub async fn get_file(&self, bucket: &str, key: &str) -> Result<Vec<u8>, StorageError> {
         let resp = self.s3.get_object().bucket(bucket).key(key).send().await?;
 

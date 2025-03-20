@@ -1,4 +1,4 @@
-use crate::schemas::document_db::document::DocumentInput;
+use crate::schemas::content_db::document::DocumentInput;
 use futures::TryStreamExt;
 use mongodb::bson::doc;
 use mongodb::Database;
@@ -8,7 +8,6 @@ use serde::{Deserialize, Serialize};
 pub struct DocumentModel {
     pub title: String,
     pub content: String,
-    // 他のフィールド
 }
 
 impl DocumentModel {

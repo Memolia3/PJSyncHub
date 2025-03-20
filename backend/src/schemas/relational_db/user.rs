@@ -1,10 +1,11 @@
 use crate::configs::storage::StorageClient;
-use crate::models::db::user::{self, Entity as User};
+use crate::models::relational_db::user::{self, Entity as User};
 use async_graphql::*;
 use sea_orm::*;
 use std::io::Read;
 use uuid::Uuid;
 
+/// userテーブルの入力
 #[derive(InputObject)]
 struct CreateUserInput {
     email: String,
@@ -12,6 +13,7 @@ struct CreateUserInput {
     password: String,
 }
 
+/// userテーブルの更新入力
 #[derive(InputObject)]
 struct UpdateUserInput {
     name: Option<String>,
@@ -19,20 +21,25 @@ struct UpdateUserInput {
     avatar: Option<Upload>,
 }
 
+/// userテーブルのクエリ
 #[derive(Default)]
 pub struct UserQuery;
 
+/// userテーブルのミューテーション
 #[derive(Default)]
 pub struct UserMutation;
 
+/// userテーブルのクエリの実装
 #[Object]
 impl UserQuery {
+    /// ユーザ一覧を取得
     async fn users(&self, ctx: &Context<'_>) -> Result<Vec<user::Model>> {
         let db = ctx.data::<DatabaseConnection>()?;
         let users = User::find().all(db).await?;
         Ok(users)
     }
 
+    /// uuidからユーザを取得
     async fn user(&self, ctx: &Context<'_>, id: Uuid) -> Result<Option<user::Model>> {
         let db = ctx.data::<DatabaseConnection>()?;
         let user = User::find_by_id(id).one(db).await?;
@@ -40,8 +47,10 @@ impl UserQuery {
     }
 }
 
+/// userテーブルのミューテーションの実装
 #[Object]
 impl UserMutation {
+    /// ユーザを作成
     async fn create_user(&self, ctx: &Context<'_>, input: CreateUserInput) -> Result<user::Model> {
         let db = ctx.data::<DatabaseConnection>()?;
         let user = user::ActiveModel {
@@ -55,6 +64,7 @@ impl UserMutation {
         Ok(user)
     }
 
+    /// ユーザを更新
     async fn update_user(
         &self,
         ctx: &Context<'_>,

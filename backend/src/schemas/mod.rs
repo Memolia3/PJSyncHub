@@ -1,17 +1,14 @@
-pub mod db {
-    pub mod user;
-}
-
-pub mod document_db {
-    pub mod document;
-}
+pub mod content_db;
+pub mod relational_db;
 
 use async_graphql::MergedObject;
-use db::user::{UserMutation, UserQuery};
-use document_db::document::{DocumentMutation, DocumentQuery};
+use content_db::{ContentDBMutation, ContentDBQuery};
+use relational_db::{RelationalDBMutation, RelationalDBQuery};
 
+/// クエリ
 #[derive(MergedObject, Default)]
-pub struct Query(UserQuery, DocumentQuery);
+pub struct Query(RelationalDBQuery, ContentDBQuery);
 
+/// ミューテーション
 #[derive(MergedObject, Default)]
-pub struct Mutation(UserMutation, DocumentMutation);
+pub struct Mutation(RelationalDBMutation, ContentDBMutation);

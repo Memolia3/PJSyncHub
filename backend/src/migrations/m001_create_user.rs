@@ -1,9 +1,11 @@
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
+/// マイグレーション名
 pub struct Migration;
 
 #[async_trait::async_trait]
+/// userテーブルのマイグレーション
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
@@ -38,6 +40,7 @@ impl MigrationTrait for Migration {
             .await
     }
 
+    /// マイグレーションのロールバック
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
             .drop_table(Table::drop().table(User::Table).to_owned())
@@ -46,14 +49,24 @@ impl MigrationTrait for Migration {
 }
 
 #[derive(DeriveIden)]
+/// userテーブル
 enum User {
+    /// テーブル名
     Table,
+    /// ユーザーID
     Id,
+    /// メールアドレス
     Email,
+    /// ユーザー名
     Name,
+    /// パスワード
     Password,
+    /// アバター画像URL
     AvatarUrl,
+    /// アバター画像更新日時
     AvatarUpdatedAt,
+    /// 作成日時
     CreatedAt,
+    /// 更新日時
     UpdatedAt,
 }

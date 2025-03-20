@@ -1,7 +1,11 @@
-pub mod db {
+/// リレーショナルデータベース
+pub mod relational_db {
+    /// userテーブル
     pub mod user;
 }
 
-pub mod document_db {
+/// コンテンツデータベース
+pub mod content_db {
+    /// documentテーブル
     pub mod document;
 }

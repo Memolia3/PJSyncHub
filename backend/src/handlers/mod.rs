@@ -1,1 +1,2 @@
+/// GraphQLハンドラー
 pub mod graphql;
