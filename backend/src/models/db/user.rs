@@ -13,7 +13,7 @@ pub struct Model {
     pub name: String,
     #[graphql(skip)]
     pub password: String,
-    #[graphql(skip)]
+    #[graphql(name = "avatarUrl")]
     pub avatar_url: Option<String>,
     pub avatar_updated_at: Option<DateTimeWithTimeZone>,
     pub created_at: DateTimeWithTimeZone,

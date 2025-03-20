@@ -9,8 +9,17 @@ pub struct DocumentOutput {
     pub content: String,
 }
 
+#[derive(InputObject)]
+pub struct DocumentInput {
+    pub title: String,
+    pub content: String,
+}
+
 #[derive(Default)]
 pub struct DocumentQuery;
+
+#[derive(Default)]
+pub struct DocumentMutation;
 
 #[Object]
 impl DocumentQuery {
@@ -24,5 +33,21 @@ impl DocumentQuery {
                 content: doc.content,
             })
             .collect())
+    }
+}
+
+#[Object]
+impl DocumentMutation {
+    async fn create_document(
+        &self,
+        ctx: &Context<'_>,
+        input: DocumentInput,
+    ) -> Result<DocumentOutput> {
+        let db = ctx.data::<Database>()?;
+        let doc = DocumentModel::create(db, input).await?;
+        Ok(DocumentOutput {
+            title: doc.title,
+            content: doc.content,
+        })
     }
 }

@@ -6,26 +6,12 @@ pub mod document_db {
     pub mod document;
 }
 
-use async_graphql::{ComplexObject, SimpleObject};
+use async_graphql::MergedObject;
+use db::user::{UserMutation, UserQuery};
+use document_db::document::{DocumentMutation, DocumentQuery};
 
-#[derive(SimpleObject, Default)]
-pub struct Query {
-    user: db::user::UserQuery,
-    document: document_db::document::DocumentQuery,
-}
+#[derive(MergedObject, Default)]
+pub struct Query(UserQuery, DocumentQuery);
 
-#[derive(SimpleObject, Default)]
-pub struct Mutation {
-    user: db::user::UserMutation,
-}
-
-#[ComplexObject]
-impl Query {
-    async fn users(&self) -> &db::user::UserQuery {
-        &self.user
-    }
-
-    async fn documents(&self) -> &document_db::document::DocumentQuery {
-        &self.document
-    }
-}
+#[derive(MergedObject, Default)]
+pub struct Mutation(UserMutation, DocumentMutation);
