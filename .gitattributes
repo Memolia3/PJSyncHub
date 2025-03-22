@@ -1,0 +1,12 @@
+*.tsx linguist-language=TypeScript React
+*.ts linguist-language=TypeScript
+*.scss linguist-language=SCSS
+*.css linguist-language=CSS
+*.js linguist-language=JavaScript
+*.jsx linguist-language=JavaScript React
+*.json linguist-language=JSON
+*.md linguist-language=Markdown
+*.yml linguist-language=YAML
+*.yaml linguist-language=YAML
+*.toml linguist-language=TOML
+*.rs linguist-language=Rust
