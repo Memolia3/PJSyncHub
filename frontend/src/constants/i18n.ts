@@ -1,5 +1,5 @@
 /**
- * i18nを使用するコンポーネントのキー
+ * i18nを使用するコンポーネント, フックのキー
  */
 
 export const COMPONENT = {
@@ -11,7 +11,12 @@ export const COMPONENT = {
     SIGNUPCARD: "SignupCard",
     SIGNUPFORM: "SignupForm",
     GOOGLEAUTHBUTTON: "GoogleAuthButton",
-    VALIDATION: "Validation",
+  },
+};
+
+export const HOOK = {
+  AUTH: {
+    FORM_VALIDATION: "FormValidation",
   },
 };
 
@@ -26,6 +31,8 @@ export const COMPONENT_PATH = {
     "/components/features/auth/signup/SignupForm/SignupForm",
   [COMPONENT.AUTH.GOOGLEAUTHBUTTON]:
     "/components/features/auth/GoogleAuthButton/GoogleAuthButton",
-  [COMPONENT.AUTH.VALIDATION]:
-    "/components/features/auth/Validation/Validation",
+};
+
+export const HOOK_PATH = {
+  [HOOK.AUTH.FORM_VALIDATION]: "/hooks/auth/useFormValidation",
 };

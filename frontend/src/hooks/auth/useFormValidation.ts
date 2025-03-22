@@ -1,7 +1,7 @@
 import { useState, ChangeEvent } from "react";
 import { FormData, Validations, FormErrors } from "@/types";
 import { useTranslations } from "next-intl";
-import { COMPONENT } from "@/constants";
+import { HOOK } from "@/constants";
 
 /**
  * フォームの入力値を検証するフック
@@ -13,7 +13,7 @@ export const useFormValidation = (
   initialData: FormData,
   validations: Validations
 ) => {
-  const t = useTranslations(COMPONENT.AUTH.VALIDATION);
+  const t = useTranslations(HOOK.AUTH.FORM_VALIDATION);
   const [formData, setFormData] = useState<FormData>(initialData);
   const [errors, setErrors] = useState<FormErrors>({});
 

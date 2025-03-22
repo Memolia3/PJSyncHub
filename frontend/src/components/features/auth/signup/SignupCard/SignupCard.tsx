@@ -15,7 +15,7 @@ export default function SignupCard() {
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.title}>
-          <Text variant="h1">{t("title")}</Text>
+          <Text variant="h3">{t("title")}</Text>
         </div>
 
         <SignupForm />

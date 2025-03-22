@@ -38,7 +38,7 @@
     "signupWithGoogle": "Googleで登録",
     "loginWithGoogle": "Googleでログイン"
   },
-  "Validation": {
+  "FormValidation": {
     "required": "必須項目です",
     "minLength": "{count}文字以上",
     "minLengthField": "{count}文字以上で入力してください",

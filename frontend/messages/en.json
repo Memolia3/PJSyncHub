@@ -38,7 +38,7 @@
     "signupWithGoogle": "Sign up with Google",
     "loginWithGoogle": "Login with Google"
   },
-  "Validation": {
+  "FormValidation": {
     "required": "This field is required",
     "minLength": "At least {count} characters",
     "minLengthField": "Please enter at least {count} characters",
