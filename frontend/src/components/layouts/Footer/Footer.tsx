@@ -1,7 +1,7 @@
 import styles from "./Footer.module.scss";
 
-import { Router } from "@/components/common";
-import { SITE_NAME } from "@/constants/meta";
+import { Router, Text } from "@/components/common";
+import { COMPONENT, SITE_NAME } from "@/constants";
 
 import { getTranslations } from "next-intl/server";
 
@@ -10,25 +10,27 @@ import { getTranslations } from "next-intl/server";
  * @returns フッターコンポーネント
  */
 export default async function Footer() {
-  const t = await getTranslations("Footer");
+  const t = await getTranslations(COMPONENT.FOOTER);
   return (
     <footer className={styles.footer}>
       <div className={styles.footer__inner}>
         <div className={styles.footer__content}>
           <div className={styles.footer__copyright}>
-            &copy; {new Date().getFullYear()} {SITE_NAME}
+            <Text>
+              &copy; {new Date().getFullYear()} {SITE_NAME}
+            </Text>
           </div>
           <nav className={styles.footer__nav}>
             <Router href="/terms" className={styles.footer__link}>
-              {t("terms")}
+              <Text>{t("terms")}</Text>
             </Router>
             <span className={styles.footer__separator}>|</span>
             <Router href="/privacy" className={styles.footer__link}>
-              {t("privacy")}
+              <Text>{t("privacy")}</Text>
             </Router>
             <span className={styles.footer__separator}>|</span>
             <Router href="/contact" className={styles.footer__link}>
-              {t("contact")}
+              <Text>{t("contact")}</Text>
             </Router>
           </nav>
         </div>

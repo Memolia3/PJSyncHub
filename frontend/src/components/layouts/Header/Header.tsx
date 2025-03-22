@@ -1,8 +1,8 @@
 import Image from "next/image";
 import styles from "./Header.module.scss";
 
-import { Router } from "@/components/common";
-import { SITE_NAME } from "@/constants/meta";
+import { Router, Text } from "@/components/common";
+import { COMPONENT, SITE_NAME, INDEX_NAVIGATE } from "@/constants";
 
 import { getTranslations } from "next-intl/server";
 
@@ -11,7 +11,9 @@ import { getTranslations } from "next-intl/server";
  * @returns ヘッダーコンポーネント
  */
 export default async function Header() {
-  const t = await getTranslations("Header");
+  const t = await getTranslations(COMPONENT.HEADER);
+  const isLoggedIn = false; // ここで認証状態を確認
+
   return (
     <header className={styles.header}>
       <div className={styles.header__inner}>
@@ -20,30 +22,62 @@ export default async function Header() {
             <Image
               src="/images/logo.png"
               alt="Logo"
-              width={60}
-              height={60}
+              width={40}
+              height={40}
+              className={styles.header__logo_image}
               priority
             />
-            <span className={styles.header__title}>{SITE_NAME}</span>
+            <Text variant="h1" className={styles.header__title}>
+              {SITE_NAME}
+            </Text>
           </Router>
         </div>
 
         <nav className={styles.header__nav}>
-          <Router href="/projects" className={styles.header__link}>
-            {t("projects")}
-          </Router>
-          <Router href="/tasks" className={styles.header__link}>
-            {t("tasks")}
-          </Router>
+          {isLoggedIn ? (
+            // ログイン済みユーザー向けナビ
+            <>
+              {INDEX_NAVIGATE.map((navigate, index) => (
+                <Router
+                  href={navigate.href}
+                  className={styles.header__link}
+                  key={index}
+                >
+                  <Text>{t(navigate.label)}</Text>
+                </Router>
+              ))}
+            </>
+          ) : (
+            // 未ログインユーザー向けナビ
+            <>
+              {INDEX_NAVIGATE.map((navigate, index) => (
+                <Router
+                  href={navigate.href}
+                  className={styles.header__link}
+                  key={index}
+                >
+                  <Text>{t(navigate.label)}</Text>
+                </Router>
+              ))}
+            </>
+          )}
         </nav>
 
         <div className={styles.header__right}>
-          <Router href="/login" className={styles.header__button}>
-            {t("login")}
-          </Router>
-          <Router href="/signup" className={styles.header__button_primary}>
-            {t("signup")}
-          </Router>
+          {isLoggedIn ? (
+            <Router href="/dashboard" className={styles.header__button}>
+              <Text>{t("dashboard")}</Text>
+            </Router>
+          ) : (
+            <>
+              <Router href="/login" className={styles.header__button}>
+                <Text>{t("login")}</Text>
+              </Router>
+              <Router href="/signup" className={styles.header__button_primary}>
+                <Text>{t("signup")}</Text>
+              </Router>
+            </>
+          )}
         </div>
       </div>
     </header>

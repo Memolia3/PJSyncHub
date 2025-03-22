@@ -7,7 +7,11 @@
   &__inner {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 12px;
+
+    @media (max-width: 768px) {
+      padding: 0 8px;
+    }
   }
 
   &__content {
@@ -24,20 +28,25 @@
 
   &__copyright {
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: var(--font-size-base);
   }
 
   &__nav {
     display: flex;
     align-items: center;
     gap: 12px;
+
+    @media (max-width: 768px) {
+      gap: 8px;
+    }
   }
 
   &__link {
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: var(--font-size-base);
     text-decoration: none;
     transition: color 0.2s;
+    white-space: nowrap;
 
     &:hover {
       color: var(--text-primary);
@@ -46,6 +55,6 @@
 
   &__separator {
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: var(--font-size-base);
   }
 }

@@ -1,7 +1,4 @@
 {
-  "Index": {
-    "title": "Hello"
-  },
   "LocaleLayout": {
     "meta": {
       "title": "Home",
@@ -9,8 +6,8 @@
     }
   },
   "Header": {
-    "projects": "Projects",
-    "tasks": "Tasks",
+    "features": "Features",
+    "pricing": "Pricing",
     "login": "Login",
     "signup": "Signup"
   },
@@ -18,5 +15,11 @@
     "terms": "Terms",
     "privacy": "Privacy",
     "contact": "Contact"
+  },
+  "Hero": {
+    "title": "Are you struggling with project and task management?",
+    "description": "PJ-SYNC-HUB is a tool that allows you to manage projects and tasks in real-time with your team.",
+    "start": "Start",
+    "learn_more": "Learn more"
   }
 }

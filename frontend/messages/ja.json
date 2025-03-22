@@ -1,7 +1,4 @@
 {
-  "Index": {
-    "title": "こんにちは"
-  },
   "LocaleLayout": {
     "meta": {
       "title": "ホーム",
@@ -9,8 +6,8 @@
     }
   },
   "Header": {
-    "projects": "プロジェクト",
-    "tasks": "タスク",
+    "features": "機能",
+    "pricing": "料金",
     "login": "ログイン",
     "signup": "新規登録"
   },
@@ -18,5 +15,11 @@
     "terms": "利用規約",
     "privacy": "プライバシーポリシー",
     "contact": "お問い合わせ"
+  },
+  "Hero": {
+    "title": "プロジェクト、タスク管理にお困りですか？",
+    "description": "PJ-SYNC-HUBはチームとリアルタイムでプロジェクトやタスクを管理できるツールです。",
+    "start": "はじめる",
+    "learn_more": "詳しくはこちら"
   }
 }

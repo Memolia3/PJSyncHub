@@ -2,7 +2,7 @@ import "../globals.css";
 
 import type { Metadata } from "next";
 
-import { SITE_NAME } from "@/constants/meta";
+import { COMPONENT, SITE_NAME } from "@/constants";
 import { getTranslations, getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 
@@ -12,7 +12,7 @@ import { NextIntlClientProvider } from "next-intl";
  * @returns メタデータ
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("LocaleLayout");
+  const t = await getTranslations(COMPONENT.LOCALE_LAYOUT);
   return {
     title: `${SITE_NAME} | ${t("meta.title")}`,
     description: t("meta.description"),
