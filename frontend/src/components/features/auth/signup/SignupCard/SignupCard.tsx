@@ -4,10 +4,15 @@ import styles from "./SignupCard.module.scss";
 
 import { Text } from "@/components/common";
 import { COMPONENT } from "@/constants";
-import { GoogleAuthButton } from "@/components/features/auth";
-import { SignupForm } from "@/components/features/auth/";
+import { SignupForm, GoogleAuthButton } from "@/components/features/auth";
+
 import { useTranslations } from "next-intl";
 
+/**
+ * 新規登録画面
+ * 新規登録のコンポーネントを集約
+ * @returns SignupCard
+ */
 export default function SignupCard() {
   const t = useTranslations(COMPONENT.AUTH.SIGNUPCARD);
 

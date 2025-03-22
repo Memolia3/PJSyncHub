@@ -1,6 +1,7 @@
 import { useState, ChangeEvent } from "react";
-import { FormData, Validations, FormErrors } from "@/types";
 import { useTranslations } from "next-intl";
+
+import { FormData, Validations, FormErrors } from "@/types";
 import { HOOK } from "@/constants";
 
 /**

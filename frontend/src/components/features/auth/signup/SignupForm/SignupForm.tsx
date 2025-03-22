@@ -7,6 +7,10 @@ import { COMPONENT } from "@/constants";
 import { useTranslations } from "next-intl";
 import { useFormValidation } from "@/hooks/auth/useFormValidation";
 
+/**
+ * 新規登録フォームコンポーネント
+ * @returns SignupForm
+ */
 export default function SignupForm() {
   const t = useTranslations(COMPONENT.AUTH.SIGNUPFORM);
 

@@ -3,6 +3,11 @@ import { Router, Text } from "@/components/common";
 import { useTranslations } from "next-intl";
 import { COMPONENT } from "@/constants";
 
+/**
+ * ヒーローコンポーネント
+ * ホーム画面のビッグイメージ
+ * @returns Hero
+ */
 export default function Hero() {
   const t = useTranslations(COMPONENT.HERO);
 

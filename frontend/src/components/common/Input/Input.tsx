@@ -1,9 +1,13 @@
+"use client";
+
 import styles from "./Input.module.scss";
 
 import type { InputProps } from "@/types";
 
 /**
  * 入力フィールドコンポーネント
+ * ※クライアントコンポーネント
+ * 子コンポーネントはクライアントコンポーネントになる
  * @param param 入力フィールドのプロパティ
  * @returns 入力フィールドコンポーネント
  */

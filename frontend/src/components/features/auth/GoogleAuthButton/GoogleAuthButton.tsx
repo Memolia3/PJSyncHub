@@ -7,6 +7,11 @@ import { COMPONENT } from "@/constants";
 
 import { useTranslations } from "next-intl";
 
+/**
+ * Google認証ボタン
+ * @param mode モード - 新規登録かログインか
+ * @returns
+ */
 export default function GoogleAuthButton({
   mode,
 }: {
