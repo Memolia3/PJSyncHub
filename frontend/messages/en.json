@@ -1,0 +1,22 @@
+{
+  "Index": {
+    "title": "Hello"
+  },
+  "LocaleLayout": {
+    "meta": {
+      "title": "Home",
+      "description": "PJ-SYNC-HUB is a real-time project management tool that helps you manage your projects."
+    }
+  },
+  "Header": {
+    "projects": "Projects",
+    "tasks": "Tasks",
+    "login": "Login",
+    "signup": "Signup"
+  },
+  "Footer": {
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "contact": "Contact"
+  }
+}

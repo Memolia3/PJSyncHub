@@ -16,9 +16,11 @@ ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV WATCHPACK_POLLING=true
 ENV CHOKIDAR_USEPOLLING=true
+ENV NEXT_WEBPACK_POLLING=1000
+ENV NEXT_TURBO_POLL=1000
 
 # 開発サーバーのポート
 EXPOSE 3000
 
 # 開発サーバーを起動
-CMD ["yarn", "dev", "--turbopack"]
+CMD ["yarn", "dev"]

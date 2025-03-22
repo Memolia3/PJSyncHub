@@ -1,0 +1,22 @@
+{
+  "Index": {
+    "title": "こんにちは"
+  },
+  "LocaleLayout": {
+    "meta": {
+      "title": "ホーム",
+      "description": "PJ-SYNC-HUBはリアルタイムでプロジェクト管理を行うツールです。"
+    }
+  },
+  "Header": {
+    "projects": "プロジェクト",
+    "tasks": "タスク",
+    "login": "ログイン",
+    "signup": "新規登録"
+  },
+  "Footer": {
+    "terms": "利用規約",
+    "privacy": "プライバシーポリシー",
+    "contact": "お問い合わせ"
+  }
+}
