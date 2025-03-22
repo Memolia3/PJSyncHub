@@ -47,12 +47,30 @@
   }
 
   &__title {
-    font-size: var(--font-size-xl);
-    font-weight: 600;
-    color: var(--text-primary);
+    background: linear-gradient(
+      to right,
+      #ff1493,
+      #ff69b4,
+      #ff8c00,
+      #ffd700,
+      #32cd32,
+      #00bfff,
+      #8a2be2
+    );
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: rainbow 20s linear infinite;
 
-    @media (max-width: 480px) {
+    @media (max-width: 600px) {
       display: none;
+    }
+  }
+
+  @keyframes rainbow {
+    to {
+      background-position: 200% center;
     }
   }
 

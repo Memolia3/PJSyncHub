@@ -5,6 +5,12 @@
       "description": "PJ-SYNC-HUB is a real-time project management tool that helps you manage your projects."
     }
   },
+  "SignupLayout": {
+    "meta": {
+      "title": "Sign Up",
+      "description": "Create your PJ-SYNC-HUB account in a few simple steps."
+    }
+  },
   "Header": {
     "features": "Features",
     "pricing": "Pricing",
@@ -17,7 +23,7 @@
     "contact": "Contact"
   },
   "Hero": {
-    "title": "Are you struggling with project and task management?",
+    "title": "Are you having trouble managing your projects and tasks?",
     "description": "PJ-SYNC-HUB is a tool that allows you to manage projects and tasks in real-time with your team.",
     "start": "Start",
     "learn_more": "Learn more"

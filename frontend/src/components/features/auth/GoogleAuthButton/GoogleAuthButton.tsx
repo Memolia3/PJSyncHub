@@ -2,7 +2,7 @@
 
 import styles from "./GoogleAuthButton.module.scss";
 
-import { Button } from "@/components/common";
+import { Text, Button } from "@/components/common";
 import { COMPONENT } from "@/constants";
 
 import { useTranslations } from "next-intl";
@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl";
 /**
  * Google認証ボタン
  * @param mode モード - 新規登録かログインか
- * @returns
+ * @returns Google認証ボタンコンポーネント
  */
 export default function GoogleAuthButton({
   mode,
@@ -49,7 +49,9 @@ export default function GoogleAuthButton({
         </svg>
       }
     >
-      {mode === "signup" ? t("signupWithGoogle") : t("loginWithGoogle")}
+      <Text>
+        {mode === "signup" ? t("signupWithGoogle") : t("loginWithGoogle")}
+      </Text>
     </Button>
   );
 }

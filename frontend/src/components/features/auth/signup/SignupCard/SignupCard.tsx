@@ -11,7 +11,7 @@ import { useTranslations } from "next-intl";
 /**
  * 新規登録画面
  * 新規登録のコンポーネントを集約
- * @returns SignupCard
+ * @returns 新規登録カードコンポーネント
  */
 export default function SignupCard() {
   const t = useTranslations(COMPONENT.AUTH.SIGNUPCARD);

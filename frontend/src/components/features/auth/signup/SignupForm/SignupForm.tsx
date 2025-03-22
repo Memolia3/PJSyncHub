@@ -9,7 +9,7 @@ import { useFormValidation } from "@/hooks/auth/useFormValidation";
 
 /**
  * 新規登録フォームコンポーネント
- * @returns SignupForm
+ * @returns 新規登録フォームコンポーネント
  */
 export default function SignupForm() {
   const t = useTranslations(COMPONENT.AUTH.SIGNUPFORM);
@@ -141,9 +141,11 @@ export default function SignupForm() {
 
       <div className={styles.actions}>
         <Button type="button" variant="secondary" onClick={handleReset}>
-          {t("reset")}
+          <Text>{t("reset")}</Text>
         </Button>
-        <Button type="submit">{t("signup")}</Button>
+        <Button type="submit">
+          <Text>{t("signup")}</Text>
+        </Button>
       </div>
     </form>
   );

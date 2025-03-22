@@ -5,9 +5,15 @@
       "description": "PJ-SYNC-HUBはリアルタイムでプロジェクト管理を行うツールです。"
     }
   },
+  "SignupLayout": {
+    "meta": {
+      "title": "新規登録",
+      "description": "PJ-SYNC-HUBの新規登録ページです。簡単な手順でアカウントを作成できます。"
+    }
+  },
   "Header": {
-    "features": "機能",
-    "pricing": "料金",
+    "features": "機能について",
+    "pricing": "料金プラン",
     "login": "ログイン",
     "signup": "新規登録"
   },

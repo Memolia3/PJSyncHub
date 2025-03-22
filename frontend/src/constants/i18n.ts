@@ -3,9 +3,12 @@
  */
 
 export const COMPONENT = {
+  LAYOUT: {
+    LOCALE: "LocaleLayout",
+    SIGNUP: "SignupLayout",
+  },
   HEADER: "Header",
   FOOTER: "Footer",
-  LOCALE_LAYOUT: "LocaleLayout",
   HERO: "Hero",
   AUTH: {
     SIGNUPCARD: "SignupCard",
@@ -21,9 +24,10 @@ export const HOOK = {
 };
 
 export const COMPONENT_PATH = {
+  [COMPONENT.LAYOUT.LOCALE]: "/app/[locale]/layout",
+  [COMPONENT.LAYOUT.SIGNUP]: "/app/[locale]/signup/layout",
   [COMPONENT.HEADER]: "/components/layouts/Header/Header",
   [COMPONENT.FOOTER]: "/components/layouts/Footer/Footer",
-  [COMPONENT.LOCALE_LAYOUT]: "/app/[locale]/layout",
   [COMPONENT.HERO]: "/components/features/home/Hero/Hero",
   [COMPONENT.AUTH.SIGNUPCARD]:
     "/components/features/auth/signup/SignupCard/SignupCard",

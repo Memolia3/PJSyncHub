@@ -13,7 +13,7 @@ import { NextIntlClientProvider } from "next-intl";
  * @returns メタデータ
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations(COMPONENT.LOCALE_LAYOUT);
+  const t = await getTranslations(COMPONENT.LAYOUT.LOCALE);
   return {
     title: `${SITE_NAME} | ${t("meta.title")}`,
     description: t("meta.description"),
