@@ -2,6 +2,7 @@ import "../globals.css";
 
 import type { Metadata } from "next";
 
+import { Footer, Header } from "@/components/layouts";
 import { COMPONENT, SITE_NAME } from "@/constants";
 import { getTranslations, getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
@@ -41,7 +42,9 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
+          <Header />
           {children}
+          <Footer />
         </NextIntlClientProvider>
       </body>
     </html>

@@ -1,11 +1,6 @@
-import { ReactNode } from "react";
 import styles from "./Text.module.scss";
 
-type TextProps = {
-  children: ReactNode;
-  variant?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p";
-  className?: string;
-};
+import type { TextProps } from "@/types";
 
 /**
  * テキストコンポーネント

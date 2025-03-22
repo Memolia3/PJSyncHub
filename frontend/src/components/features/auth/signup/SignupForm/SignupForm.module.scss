@@ -1,0 +1,79 @@
+.container {
+  width: 50%;
+  min-width: 320px;
+  max-width: 600px;
+  margin: 80px auto;
+  padding: 0 16px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease forwards;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin: 40px auto;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form {
+  width: 100%;
+}
+
+.title {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.formGroup {
+  margin-bottom: 32px;
+
+  &:last-of-type {
+    margin-bottom: 40px;
+  }
+}
+
+.inputGroup {
+  margin-top: 12px;
+  position: relative;
+
+  // アイコンを表示する場合
+  &.withIcon {
+    input {
+      padding-left: 40px;
+    }
+  }
+}
+
+.icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 12px;
+
+    button {
+      width: 100%;
+    }
+  }
+}

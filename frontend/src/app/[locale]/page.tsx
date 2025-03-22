@@ -1,6 +1,5 @@
 import styles from "./index.module.scss";
 
-import { Header, Footer } from "@/components/layouts";
 import { Hero } from "@/components/features/home";
 
 /**
@@ -12,11 +11,9 @@ import { Hero } from "@/components/features/home";
 export default function IndexPage() {
   return (
     <div className={styles.container}>
-      <Header />
       <main className={styles.main}>
         <Hero />
       </main>
-      <Footer />
     </div>
   );
 }

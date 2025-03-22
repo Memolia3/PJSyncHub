@@ -1,0 +1,70 @@
+.container {
+  width: 50%;
+  min-width: 320px;
+  max-width: 600px;
+  margin: 80px auto;
+  padding: 0 16px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease forwards;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin: 40px auto;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  width: 100%;
+  padding: 40px;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    padding: 24px;
+  }
+
+  @media (prefers-color-scheme: light) {
+    border: 1px solid var(--border);
+  }
+}
+
+.title {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 32px 0;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+
+  span {
+    background: var(--surface);
+    padding: 0 16px;
+    color: var(--text-secondary);
+    position: relative;
+  }
+}

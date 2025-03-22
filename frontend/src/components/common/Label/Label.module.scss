@@ -1,0 +1,13 @@
+.label {
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.required {
+  color: red;
+  font-size: var(--font-size-xs);
+}

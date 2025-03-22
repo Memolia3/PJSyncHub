@@ -31,37 +31,36 @@ export default async function Header() {
               {SITE_NAME}
             </Text>
           </Router>
+          <nav className={styles.header__nav}>
+            {isLoggedIn ? (
+              // ログイン済みユーザー向けナビ
+              <>
+                {INDEX_NAVIGATE.map((navigate, index) => (
+                  <Router
+                    href={navigate.href}
+                    className={styles.header__link}
+                    key={index}
+                  >
+                    <Text>{t(navigate.label)}</Text>
+                  </Router>
+                ))}
+              </>
+            ) : (
+              // 未ログインユーザー向けナビ
+              <>
+                {INDEX_NAVIGATE.map((navigate, index) => (
+                  <Router
+                    href={navigate.href}
+                    className={styles.header__link}
+                    key={index}
+                  >
+                    <Text>{t(navigate.label)}</Text>
+                  </Router>
+                ))}
+              </>
+            )}
+          </nav>
         </div>
-
-        <nav className={styles.header__nav}>
-          {isLoggedIn ? (
-            // ログイン済みユーザー向けナビ
-            <>
-              {INDEX_NAVIGATE.map((navigate, index) => (
-                <Router
-                  href={navigate.href}
-                  className={styles.header__link}
-                  key={index}
-                >
-                  <Text>{t(navigate.label)}</Text>
-                </Router>
-              ))}
-            </>
-          ) : (
-            // 未ログインユーザー向けナビ
-            <>
-              {INDEX_NAVIGATE.map((navigate, index) => (
-                <Router
-                  href={navigate.href}
-                  className={styles.header__link}
-                  key={index}
-                >
-                  <Text>{t(navigate.label)}</Text>
-                </Router>
-              ))}
-            </>
-          )}
-        </nav>
 
         <div className={styles.header__right}>
           {isLoggedIn ? (

@@ -17,9 +17,38 @@
     "contact": "お問い合わせ"
   },
   "Hero": {
-    "title": "プロジェクト、タスク管理にお困りですか？",
+    "title": "プロジェクトやタスクの管理にお困りですか？",
     "description": "PJ-SYNC-HUBはチームとリアルタイムでプロジェクトやタスクを管理できるツールです。",
     "start": "はじめる",
     "learn_more": "詳しくはこちら"
+  },
+  "SignupCard": {
+    "title": "アカウント作成",
+    "or": "または"
+  },
+  "SignupForm": {
+    "email": "メールアドレス",
+    "name": "ユーザー名",
+    "password": "パスワード",
+    "passwordConfirm": "パスワード（確認）",
+    "reset": "リセット",
+    "signup": "登録"
+  },
+  "GoogleAuthButton": {
+    "signupWithGoogle": "Googleで登録",
+    "loginWithGoogle": "Googleでログイン"
+  },
+  "Validation": {
+    "required": "必須項目です",
+    "minLength": "{count}文字以上",
+    "minLengthField": "{count}文字以上で入力してください",
+    "maxLength": "{count}文字以下で入力してください",
+    "invalidFormat": "入力形式が正しくありません",
+    "mismatch": "入力値が一致しません",
+    "lowercase": "小文字",
+    "uppercase": "大文字",
+    "number": "数字",
+    "symbol": "記号",
+    "passwordRequirements": "パスワードには{requirements}が必要です"
   }
 }
