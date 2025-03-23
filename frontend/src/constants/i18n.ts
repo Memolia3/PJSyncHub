@@ -14,6 +14,7 @@ export const COMPONENT = {
     SIGNUPCARD: "SignupCard",
     SIGNUPFORM: "SignupForm",
     GOOGLEAUTHBUTTON: "GoogleAuthButton",
+    GITHUBAUTHBUTTON: "GithubAuthButton",
   },
 };
 
@@ -35,6 +36,8 @@ export const COMPONENT_PATH = {
     "/components/features/auth/signup/SignupForm/SignupForm",
   [COMPONENT.AUTH.GOOGLEAUTHBUTTON]:
     "/components/features/auth/GoogleAuthButton/GoogleAuthButton",
+  [COMPONENT.AUTH.GITHUBAUTHBUTTON]:
+    "/components/features/auth/GithubAuthButton/GithubAuthButton",
 };
 
 export const HOOK_PATH = {

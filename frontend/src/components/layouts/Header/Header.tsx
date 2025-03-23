@@ -1,7 +1,8 @@
 import Image from "next/image";
 import styles from "./Header.module.scss";
 
-import { Router, Text } from "@/components/common";
+import { handleSignOut } from "@/lib/actions/auth";
+import { Router, Text, Button } from "@/components/common";
 import { COMPONENT, SITE_NAME, INDEX_NAVIGATE } from "@/constants";
 
 import { getTranslations } from "next-intl/server";
@@ -57,6 +58,7 @@ export default async function Header() {
                     <Text>{t(navigate.label)}</Text>
                   </Router>
                 ))}
+                <Button onClick={handleSignOut}>テストログアウトボタン</Button>
               </>
             )}
           </nav>
@@ -69,10 +71,13 @@ export default async function Header() {
             </Router>
           ) : (
             <>
-              <Router href="/login" className={styles.header__button}>
+              <Router href="/auth/login" className={styles.header__button}>
                 <Text>{t("login")}</Text>
               </Router>
-              <Router href="/signup" className={styles.header__button_primary}>
+              <Router
+                href="/auth/signup"
+                className={styles.header__button_primary}
+              >
                 <Text>{t("signup")}</Text>
               </Router>
             </>

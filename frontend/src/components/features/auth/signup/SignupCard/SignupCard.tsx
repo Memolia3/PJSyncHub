@@ -4,7 +4,11 @@ import styles from "./SignupCard.module.scss";
 
 import { Text } from "@/components/common";
 import { COMPONENT } from "@/constants";
-import { SignupForm, GoogleAuthButton } from "@/components/features/auth";
+import {
+  SignupForm,
+  GoogleAuthButton,
+  GithubAuthButton,
+} from "@/components/features/auth";
 
 import { useTranslations } from "next-intl";
 
@@ -30,6 +34,7 @@ export default function SignupCard() {
         </div>
 
         <GoogleAuthButton mode="signup" />
+        <GithubAuthButton mode="signup" />
       </div>
     </div>
   );

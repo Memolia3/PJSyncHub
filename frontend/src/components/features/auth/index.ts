@@ -1,6 +1,9 @@
 export { default as GoogleAuthButton } from "./GoogleAuthButton";
 export * from "./GoogleAuthButton";
 
+export { default as GithubAuthButton } from "./GithubAuthButton";
+export * from "./GithubAuthButton";
+
 export { default as SignupCard } from "./signup/SignupCard";
 export * from "./signup/SignupCard";
 

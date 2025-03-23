@@ -20,7 +20,7 @@ export default function Hero() {
           </Text>
           <Text className={styles.hero__description}>{t("description")}</Text>
           <div className={styles.hero__actions}>
-            <Router href="/signup" className={styles.hero__button_primary}>
+            <Router href="/auth/signup" className={styles.hero__button_primary}>
               {t("start")}
             </Router>
             <Router href="/features" className={styles.hero__button}>

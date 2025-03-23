@@ -44,6 +44,10 @@
     "signupWithGoogle": "Googleで登録",
     "loginWithGoogle": "Googleでログイン"
   },
+  "GithubAuthButton": {
+    "signupWithGithub": "GitHubで登録",
+    "loginWithGithub": "GitHubでログイン"
+  },
   "FormValidation": {
     "required": "必須項目です",
     "minLength": "{count}文字以上で入力してください",

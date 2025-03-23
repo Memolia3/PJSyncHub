@@ -44,6 +44,10 @@
     "signupWithGoogle": "Sign up with Google",
     "loginWithGoogle": "Login with Google"
   },
+  "GithubAuthButton": {
+    "signupWithGithub": "Sign up with GitHub",
+    "loginWithGithub": "Login with GitHub"
+  },
   "FormValidation": {
     "required": "This field is required",
     "minLength": "Please enter at least {count} characters",

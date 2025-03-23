@@ -2,6 +2,7 @@
 
 import styles from "./GoogleAuthButton.module.scss";
 
+import { signInWithGoogle } from "@/lib/actions/auth";
 import { Text, Button } from "@/components/common";
 import { COMPONENT } from "@/constants";
 
@@ -23,7 +24,7 @@ export default function GoogleAuthButton({
       variant="secondary"
       fullWidth
       className={styles.button}
-      // onClick={() => handleGoogleAuth()}
+      onClick={signInWithGoogle}
       startAdornment={
         <svg
           className={styles.icon}

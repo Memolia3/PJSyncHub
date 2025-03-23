@@ -12,6 +12,12 @@ services:
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_GRAPHQL_URL=http://backend:${BACKEND_PORT:-8080}/graphql
+      - AUTH_URL=${AUTH_URL}
+      - AUTH_SECRET=${AUTH_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
       - TZ=Asia/Tokyo
     depends_on:
       - backend
