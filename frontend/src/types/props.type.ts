@@ -37,6 +37,7 @@ export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & {
   fullWidth?: boolean;
   className?: string;
   error?: string;
+  endAdornment?: ReactNode;
 };
 
 // ラベルのプロパティの型

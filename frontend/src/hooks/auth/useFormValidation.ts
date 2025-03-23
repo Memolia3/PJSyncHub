@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useCallback } from "react";
 import { useTranslations } from "next-intl";
 
 import { FormData, Validations, FormErrors } from "@/types";
@@ -29,11 +29,17 @@ export const useFormValidation = (
     const hasNumber = /[0-9]/.test(value);
     const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(value);
 
+    // 長さチェック（別のフォーマットで表示）
+    if (value.length < 8) {
+      return t("minLength", { count: 8 });
+    }
+    if (value.length > 100) {
+      return t("maxLength", { count: 100 });
+    }
+
+    // 文字種チェック（passwordRequirementsのフォーマットで表示）
     const errors: string[] = [];
 
-    if (value.length < 8) {
-      errors.push(t("minLength", { count: 8 }));
-    }
     if (!hasLower) {
       errors.push(t("lowercase"));
     }
@@ -73,7 +79,7 @@ export const useFormValidation = (
     }
 
     if (rules.minLength && value.length < rules.minLength) {
-      return t("minLengthField", { count: rules.minLength });
+      return t("minLength", { count: rules.minLength });
     }
 
     if (rules.maxLength && value.length > rules.maxLength) {
@@ -109,9 +115,9 @@ export const useFormValidation = (
 
   /**
    * フォームの入力値が有効かどうかを返す
-   * @returns 有効かどうか
+   * @returns フォームの入力値が有効かどうか
    */
-  const isValid = () => {
+  const isValid = useCallback(() => {
     const newErrors: FormErrors = {};
     let isValid = true;
 
@@ -125,7 +131,7 @@ export const useFormValidation = (
 
     setErrors(newErrors);
     return isValid;
-  };
+  }, [formData, validations, validateField]);
 
   /**
    * フォームの入力値をリセットする

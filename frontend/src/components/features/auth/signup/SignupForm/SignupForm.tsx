@@ -1,69 +1,31 @@
 "use client";
 
 import styles from "./SignupForm.module.scss";
-
+import { useState, useEffect, useMemo } from "react";
 import { Text, Label, Input, Button } from "@/components/common";
+import { useSignup } from "@/hooks/auth";
 import { COMPONENT } from "@/constants";
-import { useTranslations } from "next-intl";
-import { useFormValidation } from "@/hooks/auth/useFormValidation";
+import { VisibilityIcon, VisibilityOffIcon } from "@/components/common";
 
 /**
  * 新規登録フォームコンポーネント
  * @returns 新規登録フォームコンポーネント
  */
 export default function SignupForm() {
-  const t = useTranslations(COMPONENT.AUTH.SIGNUPFORM);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const {
+    formData,
+    errors,
+    handleChange,
+    handleSubmit,
+    resetForm,
+    t,
+    isValid,
+  } = useSignup(COMPONENT.AUTH.SIGNUPFORM);
 
-  /**
-   * フォームの入力値とエラーを管理
-   * バリデーションの設定
-   */
-  const { formData, errors, handleChange, isValid, resetForm } =
-    useFormValidation(
-      {
-        email: "",
-        name: "",
-        password: "",
-        passwordConfirm: "",
-      },
-      {
-        email: {
-          required: true,
-          pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-        },
-        name: {
-          required: true,
-          minLength: 3,
-        },
-        password: {
-          required: true,
-          pattern:
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/,
-        },
-        passwordConfirm: {
-          required: true,
-          match: "password",
-        },
-      }
-    );
-
-  /**
-   * フォームの送信
-   * @param e イベント
-   */
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (isValid()) {
-      console.log("送信可能", formData);
-    }
-  };
-
-  /**
-   * フォームの入力値をリセットする
-   */
-  const handleReset = () => {
-    resetForm();
-  };
+  // isFormValidをuseMemoで計算
+  const isFormValid = useMemo(() => isValid(), [formData]);
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -110,13 +72,31 @@ export default function SignupForm() {
         <div className={styles.inputGroup}>
           <Input
             id="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="••••••••"
             fullWidth
             name="password"
             value={formData.password}
             onChange={handleChange}
             error={errors.password}
+            endAdornment={
+              <div
+                className={styles.togglePassword}
+                onClick={() => setShowPassword(!showPassword)}
+                role="button"
+                tabIndex={0}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <VisibilityIcon className={styles.icon} aria-hidden="true" />
+                ) : (
+                  <VisibilityOffIcon
+                    className={styles.icon}
+                    aria-hidden="true"
+                  />
+                )}
+              </div>
+            }
           />
         </div>
       </div>
@@ -128,22 +108,42 @@ export default function SignupForm() {
         <div className={styles.inputGroup}>
           <Input
             id="passwordConfirm"
-            type="password"
+            type={showPasswordConfirm ? "text" : "password"}
             placeholder="••••••••"
             fullWidth
             name="passwordConfirm"
             value={formData.passwordConfirm}
             onChange={handleChange}
             error={errors.passwordConfirm}
+            endAdornment={
+              <div
+                className={styles.togglePassword}
+                onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                role="button"
+                tabIndex={0}
+                aria-label={
+                  showPasswordConfirm ? "Hide password" : "Show password"
+                }
+              >
+                {showPasswordConfirm ? (
+                  <VisibilityIcon className={styles.icon} aria-hidden="true" />
+                ) : (
+                  <VisibilityOffIcon
+                    className={styles.icon}
+                    aria-hidden="true"
+                  />
+                )}
+              </div>
+            }
           />
         </div>
       </div>
 
       <div className={styles.actions}>
-        <Button type="button" variant="secondary" onClick={handleReset}>
+        <Button type="button" variant="secondary" onClick={resetForm}>
           <Text>{t("reset")}</Text>
         </Button>
-        <Button type="submit">
+        <Button type="submit" disabled={!isFormValid}>
           <Text>{t("signup")}</Text>
         </Button>
       </div>

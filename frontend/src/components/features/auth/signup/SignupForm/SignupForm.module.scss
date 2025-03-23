@@ -46,20 +46,30 @@
   margin-top: 12px;
   position: relative;
 
-  &.withIcon {
-    input {
-      padding-left: 40px;
+  .togglePassword {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    background: none;
+    border: none;
+
+    &:hover {
+      opacity: 1;
     }
   }
 }
 
 .icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-secondary);
-  pointer-events: none;
+  width: 20px;
+  height: 20px;
 }
 
 .actions {

@@ -46,8 +46,7 @@
   },
   "FormValidation": {
     "required": "This field is required",
-    "minLength": "At least {count} characters",
-    "minLengthField": "Please enter at least {count} characters",
+    "minLength": "Please enter at least {count} characters",
     "maxLength": "Please enter no more than {count} characters",
     "invalidFormat": "Invalid format",
     "mismatch": "Values do not match",

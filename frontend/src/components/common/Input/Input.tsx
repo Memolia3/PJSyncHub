@@ -17,16 +17,22 @@ export default function Input({
   fullWidth = false,
   className = "",
   error,
+  endAdornment,
   ...props
 }: InputProps) {
   return (
     <div className={styles.container}>
-      <input
-        className={`${styles.input} ${styles[variant]} ${styles[inputSize]} ${
-          fullWidth ? styles.fullWidth : ""
-        } ${error ? styles.error : ""} ${className}`}
-        {...props}
-      />
+      <div className={styles.inputWrapper}>
+        <input
+          className={`${styles.input} ${styles[variant]} ${styles[inputSize]} ${
+            fullWidth ? styles.fullWidth : ""
+          } ${error ? styles.error : ""} ${className}`}
+          {...props}
+        />
+        {endAdornment && (
+          <div className={styles.endAdornment}>{endAdornment}</div>
+        )}
+      </div>
       {error && <span className={styles.errorMessage}>{error}</span>}
     </div>
   );

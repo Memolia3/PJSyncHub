@@ -46,8 +46,7 @@
   },
   "FormValidation": {
     "required": "必須項目です",
-    "minLength": "{count}文字以上",
-    "minLengthField": "{count}文字以上で入力してください",
+    "minLength": "{count}文字以上で入力してください",
     "maxLength": "{count}文字以下で入力してください",
     "invalidFormat": "入力形式が正しくありません",
     "mismatch": "入力値が一致しません",
