@@ -6,6 +6,7 @@ import { Footer, Header } from "@/components/layouts";
 import { COMPONENT, SITE_NAME } from "@/constants";
 import { getTranslations, getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
+import { SessionProvider } from "next-auth/react";
 
 /**
  * メタデータを動的に生成
@@ -41,11 +42,13 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <Header />
-          {children}
-          <Footer />
-        </NextIntlClientProvider>
+        <SessionProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <Header />
+            {children}
+            <Footer />
+          </NextIntlClientProvider>
+        </SessionProvider>
       </body>
     </html>
   );

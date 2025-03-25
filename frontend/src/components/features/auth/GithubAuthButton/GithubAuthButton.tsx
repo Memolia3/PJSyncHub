@@ -8,6 +8,11 @@ import { COMPONENT } from "@/constants";
 
 import { useTranslations } from "next-intl";
 
+/**
+ * Github認証ボタン
+ * @param mode モード - 新規登録かログインか
+ * @returns Github認証ボタンコンポーネント
+ */
 export default function GithubAuthButton({
   mode,
 }: {

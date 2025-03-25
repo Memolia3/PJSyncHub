@@ -15,6 +15,7 @@
     "features": "Features",
     "pricing": "Pricing",
     "login": "Login",
+    "logout": "Logout",
     "signup": "Signup"
   },
   "Footer": {

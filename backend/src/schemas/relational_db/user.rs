@@ -19,6 +19,7 @@ struct CreateUserInput {
     email: String,
     name: String,
     password: String,
+    avatar_url: Option<String>,
 }
 
 /// userテーブルの更新入力
@@ -26,7 +27,7 @@ struct CreateUserInput {
 struct UpdateUserInput {
     name: Option<String>,
     email: Option<String>,
-    avatar: Option<Upload>,
+    avatar_url: Option<Upload>,
 }
 
 /// userテーブルのクエリ
@@ -48,9 +49,19 @@ impl UserQuery {
     }
 
     /// uuidからユーザを取得
-    async fn user(&self, ctx: &Context<'_>, id: Uuid) -> Result<Option<user::Model>> {
+    async fn user_by_id(&self, ctx: &Context<'_>, id: Uuid) -> Result<Option<user::Model>> {
         let db = ctx.data::<DatabaseConnection>()?;
         let user = User::find_by_id(id).one(db).await?;
+        Ok(user)
+    }
+
+    /// メールアドレスからユーザを取得
+    async fn user_by_email(&self, ctx: &Context<'_>, email: String) -> Result<Option<user::Model>> {
+        let db = ctx.data::<DatabaseConnection>()?;
+        let user = User::find()
+            .filter(user::Column::Email.eq(email))
+            .one(db)
+            .await?;
         Ok(user)
     }
 }
@@ -75,6 +86,7 @@ impl UserMutation {
             email: Set(input.email),
             name: Set(input.name),
             password: Set(password_hash),
+            avatar_url: Set(input.avatar_url),
             ..Default::default()
         };
         let user = user.insert(db).await?;
@@ -102,9 +114,9 @@ impl UserMutation {
         if let Some(email) = input.email {
             user.email = Set(email);
         }
-        if let Some(avatar) = input.avatar {
+        if let Some(avatar_url) = input.avatar_url {
             let mut content = Vec::new();
-            avatar.value(ctx)?.content.read_to_end(&mut content)?;
+            avatar_url.value(ctx)?.content.read_to_end(&mut content)?;
             let key = format!("avatars/{}.jpg", id);
             storage.upload_file("user-content", &key, content).await?;
             user.avatar_url = Set(Some(format!("/avatars/{}.jpg", id)));

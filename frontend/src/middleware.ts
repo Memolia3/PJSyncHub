@@ -28,20 +28,19 @@ const isAuthPage = (pathname: string) => {
 };
 
 export default async function middleware(request: NextRequest) {
+  // 先にセッションを確認
   const session = await auth();
   const pathname = request.nextUrl.pathname;
   const locale = pathname.startsWith("/en") ? "en" : "ja";
 
   // 認証ページの場合
   if (isAuthPage(pathname)) {
-    console.log("isAuthPage", pathname);
     if (session) {
       // 既にログインしている場合はダッシュボードへ
       return NextResponse.redirect(
         new URL(`/${locale}/dashboard`, request.url)
       );
     }
-    return intlMiddleware(request);
   }
 
   // 保護されたルートの場合
@@ -52,11 +51,9 @@ export default async function middleware(request: NextRequest) {
         new URL(`/${locale}/auth/login`, request.url)
       );
     }
-    return intlMiddleware(request);
   }
 
-  console.log("pathname other path", pathname);
-  // その他のルートはi18nミドルウェアを通す
+  // 最後にi18nミドルウェアを実行
   return intlMiddleware(request);
 }
 

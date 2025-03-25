@@ -1,19 +1,63 @@
+"use client"; // クライアントコンポーネントに変更
+
 import Image from "next/image";
 import styles from "./Header.module.scss";
 
-import { handleSignOut } from "@/lib/actions/auth";
 import { Router, Text, Button } from "@/components/common";
 import { COMPONENT, SITE_NAME, INDEX_NAVIGATE } from "@/constants";
-
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
+import { useSession, signOut } from "next-auth/react";
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 /**
  * ヘッダー
  * @returns ヘッダーコンポーネント
  */
-export default async function Header() {
-  const t = await getTranslations(COMPONENT.HEADER);
-  const isLoggedIn = false; // ここで認証状態を確認
+export default function Header() {
+  const t = useTranslations(COMPONENT.HEADER);
+  const { data: session, status } = useSession();
+  const isLoggedIn = status === "authenticated";
+  const [showDropdown, setShowDropdown] = useState(false);
+  const pathname = usePathname();
+
+  // ローディング中の表示
+  if (status === "loading") {
+    return (
+      <header className={styles.header}>
+        <div className={styles.header__inner}>
+          <div className={styles.header__left}>
+            <Router href="/" className={styles.header__logo}>
+              <Image
+                src="/images/logo.png"
+                alt="Logo"
+                width={40}
+                height={40}
+                className={styles.header__logo_image}
+                priority
+              />
+              <Text variant="h1" className={styles.header__title}>
+                {SITE_NAME}
+              </Text>
+            </Router>
+          </div>
+          <div className={styles.header__right}>
+            <div className={styles.header__loading}>
+              <div className={styles.header__loading_spinner} />
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
+  const handleSignOutClick = async () => {
+    const locale = pathname.startsWith("/en") ? "en" : "ja";
+    await signOut({
+      redirect: true,
+      callbackUrl: `/${locale}`,
+    });
+  };
 
   return (
     <header className={styles.header}>
@@ -58,7 +102,6 @@ export default async function Header() {
                     <Text>{t(navigate.label)}</Text>
                   </Router>
                 ))}
-                <Button onClick={handleSignOut}>テストログアウトボタン</Button>
               </>
             )}
           </nav>
@@ -66,9 +109,28 @@ export default async function Header() {
 
         <div className={styles.header__right}>
           {isLoggedIn ? (
-            <Router href="/dashboard" className={styles.header__button}>
-              <Text>{t("dashboard")}</Text>
-            </Router>
+            <div className={styles.header__user}>
+              <div
+                className={styles.header__avatar}
+                onMouseEnter={() => setShowDropdown(true)}
+                onMouseLeave={() => setShowDropdown(false)}
+              >
+                <Image
+                  src={session.user.avatarUrl || "/images/default-avatar.png"}
+                  alt="User Icon"
+                  width={45}
+                  height={45}
+                  className={styles.header__avatar_image}
+                />
+                {showDropdown && (
+                  <div className={styles.header__dropdown}>
+                    <Button onClick={handleSignOutClick}>
+                      <Text>{t("logout")}</Text>
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
           ) : (
             <>
               <Router href="/auth/login" className={styles.header__button}>

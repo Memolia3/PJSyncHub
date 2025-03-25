@@ -16,11 +16,11 @@ use configs::{database::DatabasePool, env::Env, storage::StorageClient};
 use handlers::graphql::{graphql_handler, graphql_playground};
 use schemas::{Mutation, Query};
 use sea_orm_migration::MigratorTrait;
+use std::sync::Arc;
 use tokio::net::TcpListener;
 use tower_http::cors::CorsLayer;
 use tracing::{error, info, warn, Level};
 use tracing_subscriber::FmtSubscriber;
-use std::sync::Arc;
 
 /// ヘルスチェック
 async fn health_check() -> impl IntoResponse {
