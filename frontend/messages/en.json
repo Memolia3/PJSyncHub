@@ -11,12 +11,22 @@
       "description": "Create your PJ-SYNC-HUB account in a few simple steps."
     }
   },
+  "DashboardLayout": {
+    "meta": {
+      "title": "Dashboard",
+      "description": "PJ-SYNC-HUB's dashboard page."
+    }
+  },
   "Header": {
     "features": "Features",
     "pricing": "Pricing",
     "login": "Login",
     "logout": "Logout",
-    "signup": "Signup"
+    "signup": "Signup",
+    "dashboard": "Dashboard",
+    "teams": "Teams",
+    "projects": "Projects",
+    "timelines": "Timelines"
   },
   "Footer": {
     "terms": "Terms",

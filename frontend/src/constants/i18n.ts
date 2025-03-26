@@ -6,6 +6,7 @@ export const COMPONENT = {
   LAYOUT: {
     LOCALE: "LocaleLayout",
     SIGNUP: "SignupLayout",
+    DASHBOARD: "DashboardLayout",
   },
   HEADER: "Header",
   FOOTER: "Footer",
@@ -27,6 +28,7 @@ export const HOOK = {
 export const COMPONENT_PATH = {
   [COMPONENT.LAYOUT.LOCALE]: "/app/[locale]/layout",
   [COMPONENT.LAYOUT.SIGNUP]: "/app/[locale]/signup/layout",
+  [COMPONENT.LAYOUT.DASHBOARD]: "/app/[locale]/dashboard/layout",
   [COMPONENT.HEADER]: "/components/layouts/Header/Header",
   [COMPONENT.FOOTER]: "/components/layouts/Footer/Footer",
   [COMPONENT.HERO]: "/components/features/home/Hero/Hero",

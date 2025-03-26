@@ -3,7 +3,7 @@ mod handlers;
 mod migrations;
 mod models;
 mod schemas;
-
+mod utils;
 use crate::migrations::Migrator;
 use async_graphql::*;
 use axum::{

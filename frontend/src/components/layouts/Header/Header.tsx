@@ -4,7 +4,12 @@ import Image from "next/image";
 import styles from "./Header.module.scss";
 
 import { Router, Text, Button } from "@/components/common";
-import { COMPONENT, SITE_NAME, INDEX_NAVIGATE } from "@/constants";
+import {
+  COMPONENT,
+  SITE_NAME,
+  INDEX_NAVIGATE,
+  LOGIN_NAVIGATE,
+} from "@/constants";
 import { useTranslations } from "next-intl";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
@@ -80,7 +85,7 @@ export default function Header() {
             {isLoggedIn ? (
               // ログイン済みユーザー向けナビ
               <>
-                {INDEX_NAVIGATE.map((navigate, index) => (
+                {LOGIN_NAVIGATE.map((navigate, index) => (
                   <Router
                     href={navigate.href}
                     className={styles.header__link}
@@ -110,6 +115,9 @@ export default function Header() {
         <div className={styles.header__right}>
           {isLoggedIn ? (
             <div className={styles.header__user}>
+              <Text className={styles.header__user_name}>
+                {session.user.name}
+              </Text>
               <div
                 className={styles.header__avatar}
                 onMouseEnter={() => setShowDropdown(true)}

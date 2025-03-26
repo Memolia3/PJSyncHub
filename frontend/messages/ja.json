@@ -11,12 +11,22 @@
       "description": "PJ-SYNC-HUBの新規登録ページです。簡単な手順でアカウントを作成できます。"
     }
   },
+  "DashboardLayout": {
+    "meta": {
+      "title": "ダッシュボード",
+      "description": "PJ-SYNC-HUBのダッシュボードページです。"
+    }
+  },
   "Header": {
     "features": "機能について",
     "pricing": "料金プラン",
     "login": "ログイン",
     "logout": "ログアウト",
-    "signup": "新規登録"
+    "signup": "新規登録",
+    "dashboard": "ダッシュボード",
+    "teams": "チーム",
+    "projects": "プロジェクト",
+    "timelines": "タイムライン"
   },
   "Footer": {
     "terms": "利用規約",

@@ -13,3 +13,23 @@ export const INDEX_NAVIGATE = [
     label: "pricing",
   },
 ];
+
+// ログイン後のナビゲーション
+export const LOGIN_NAVIGATE = [
+  {
+    href: "/dashboard",
+    label: "dashboard",
+  },
+  {
+    href: "/teams",
+    label: "teams",
+  },
+  {
+    href: "/projects",
+    label: "projects",
+  },
+  {
+    href: "/timelines",
+    label: "timelines",
+  },
+];

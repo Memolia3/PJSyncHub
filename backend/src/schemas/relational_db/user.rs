@@ -1,12 +1,13 @@
 use crate::configs::env::Env;
 use crate::configs::storage::StorageClient;
 use crate::models::relational_db::user::{self, Entity as User};
+use crate::utils::auth::{AuthTokens, AuthUtils};
 use argon2::{
     password_hash::{rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
     Argon2,
 };
 use async_graphql::*;
-use jsonwebtoken::{encode, EncodingKey, Header};
+use jsonwebtoken::{encode, DecodingKey, EncodingKey, Header, Validation};
 use sea_orm::*;
 use serde::{Deserialize, Serialize};
 use std::io::Read;
@@ -149,25 +150,86 @@ impl UserMutation {
             return Err(Error::new("Invalid credentials"));
         }
 
-        // JWTトークンの生成
-        let expiration = chrono::Utc::now()
-            .checked_add_signed(chrono::Duration::hours(24))
-            .expect("valid timestamp")
-            .timestamp() as usize;
+        let tokens = AuthUtils::generate_token_pair(user.id, &env.jwt_secret)
+            .map_err(|e| Error::new(format!("Token generation failed: {}", e)))?;
 
-        let claims = Claims {
-            sub: user.id,
-            exp: expiration,
+        Ok(LoginResponse { tokens, user })
+    }
+
+    /// OAuth認証
+    async fn oauth_authenticate(
+        &self,
+        ctx: &Context<'_>,
+        input: OAuthAuthenticateInput,
+    ) -> Result<LoginResponse> {
+        let db = ctx.data::<DatabaseConnection>()?;
+        let env = ctx.data::<Arc<Env>>()?;
+
+        // ユーザーを検索または作成
+        let user = match User::find()
+            .filter(user::Column::Email.eq(&input.email))
+            .one(db)
+            .await?
+        {
+            Some(user) => user,
+            None => {
+                let user = user::ActiveModel {
+                    id: Set(Uuid::new_v4()),
+                    email: Set(input.email),
+                    name: Set(input.name),
+                    password: Set(String::new()),
+                    avatar_url: Set(input.avatar_url),
+                    ..Default::default()
+                };
+                user.insert(db).await?
+            }
         };
 
-        let token = encode(
-            &Header::default(),
-            &claims,
-            &EncodingKey::from_secret(env.jwt_secret.as_bytes()),
-        )
-        .map_err(|e| Error::new(format!("Token generation failed: {}", e)))?;
+        let tokens = AuthUtils::generate_token_pair(user.id, &env.jwt_secret)
+            .map_err(|e| Error::new(format!("Token generation failed: {}", e)))?;
 
-        Ok(LoginResponse { token, user })
+        Ok(LoginResponse { tokens, user })
+    }
+
+    /// トークンのリフレッシュ
+    async fn refresh_token(&self, ctx: &Context<'_>, refresh_token: String) -> Result<AuthTokens> {
+        let env = ctx.data::<Arc<Env>>()?;
+
+        // リフレッシュトークンの検証
+        let claims = jsonwebtoken::decode::<Claims>(
+            &refresh_token,
+            &DecodingKey::from_secret(env.jwt_secret.as_bytes()),
+            &Validation::default(),
+        )
+        .map_err(|_| Error::new("Invalid refresh token"))?;
+
+        if claims.claims.token_type != TokenType::Refresh {
+            return Err(Error::new("Invalid token type"));
+        }
+
+        // 新しいアクセストークンの生成
+        let access_token_exp = chrono::Utc::now()
+            .checked_add_signed(chrono::Duration::hours(1))
+            .expect("valid timestamp")
+            .timestamp();
+
+        let access_claims = Claims {
+            sub: claims.claims.sub,
+            exp: access_token_exp as usize,
+            token_type: TokenType::Access,
+        };
+
+        let access_token = encode(
+            &Header::default(),
+            &access_claims,
+            &EncodingKey::from_secret(env.jwt_secret.as_bytes()),
+        )?;
+
+        Ok(AuthTokens {
+            access_token,
+            refresh_token,
+            expires_at: access_token_exp,
+        })
     }
 }
 
@@ -179,12 +241,27 @@ struct LoginInput {
 
 #[derive(SimpleObject)]
 struct LoginResponse {
-    token: String,
+    tokens: AuthTokens,
     user: user::Model,
+}
+
+#[derive(Serialize, Deserialize, PartialEq)]
+enum TokenType {
+    Access,
+    Refresh,
 }
 
 #[derive(Serialize, Deserialize)]
 struct Claims {
-    sub: uuid::Uuid, // ユーザーID
-    exp: usize,      // 有効期限
+    sub: uuid::Uuid,
+    exp: usize,
+    token_type: TokenType,
+}
+
+#[derive(InputObject)]
+#[graphql(name = "OAuthAuthenticateInput")]
+struct OAuthAuthenticateInput {
+    email: String,
+    name: String,
+    avatar_url: Option<String>,
 }
