@@ -18,16 +18,18 @@ impl UserQuery {
         email: Option<String>,
     ) -> Result<Option<user::Model>> {
         let db = ctx.data::<DatabaseConnection>()?;
-
         let mut query = User::find();
 
-        // idまたはemailで検索
-        if let Some(id) = id {
-            query = query.filter(user::Column::Id.eq(id));
-        } else if let Some(email) = email {
-            query = query.filter(user::Column::Email.eq(email));
-        } else {
-            return Err(Error::new("id or email is required"));
+        match (id, email) {
+            (Some(id), _) => {
+                // IDでの検索を優先
+                query = query.filter(user::Column::Id.eq(id));
+            }
+            (_, Some(email)) => {
+                // emailはStringからの参照を使用
+                query = query.filter(user::Column::Email.eq(email.as_str()));
+            }
+            _ => return Err(Error::new("id or email is required")),
         }
 
         let user = query.one(db).await?;

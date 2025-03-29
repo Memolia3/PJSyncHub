@@ -85,7 +85,7 @@ impl UserMutation {
 
         // ユーザーを検索
         let user = User::find()
-            .filter(user::Column::Email.eq(&input.email))
+            .filter(user::Column::Email.eq(input.email.as_str()))
             .one(db)
             .await?
             .ok_or_else(|| Error::new("Invalid credentials"))?;
@@ -118,7 +118,7 @@ impl UserMutation {
 
         // ユーザーを検索または作成
         let user = match User::find()
-            .filter(user::Column::Email.eq(&input.email))
+            .filter(user::Column::Email.eq(input.email.as_str()))
             .one(db)
             .await?
         {
