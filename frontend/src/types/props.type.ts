@@ -47,3 +47,10 @@ export type LabelProps = {
   className?: string;
   children: ReactNode;
 };
+
+// 認証ページリンクのプロパティの型
+export type AuthLinkProps = {
+  text: string;
+  linkText: string;
+  href: string;
+};

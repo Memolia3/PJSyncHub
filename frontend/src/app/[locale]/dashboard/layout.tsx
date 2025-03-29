@@ -1,5 +1,5 @@
-import { COMPONENT, SITE_NAME } from "@/constants";
-import { getTranslations } from "next-intl/server";
+import { COMPONENT } from "@/constants";
+import { generateCommonMetadata } from "@/utils";
 import type { Metadata } from "next";
 
 /**
@@ -8,11 +8,7 @@ import type { Metadata } from "next";
  * @returns メタデータ
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations(COMPONENT.LAYOUT.DASHBOARD);
-  return {
-    title: `${SITE_NAME} | ${t("meta.title")}`,
-    description: t("meta.description"),
-  };
+  return generateCommonMetadata(COMPONENT.LAYOUT.DASHBOARD);
 }
 
 export default function DashboardLayout({

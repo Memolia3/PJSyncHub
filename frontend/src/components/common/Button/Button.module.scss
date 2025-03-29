@@ -10,9 +10,32 @@
   white-space: nowrap;
 
   &:disabled {
-    background: var(--surface);
-    opacity: 0.6;
+    background: var(--surface-disabled);
+    color: var(--text-disabled);
+    border-color: var(--border-disabled);
     cursor: not-allowed;
+    opacity: 0.8;
+    transform: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+      box-shadow: none;
+      transform: none;
+    }
+
+    // プライマリボタンの非活性
+    &.primary {
+      background: var(--primary-disabled);
+      color: var(--text-on-primary-disabled);
+      border: none;
+    }
+
+    // セカンダリボタンの非活性
+    &.secondary {
+      background: var(--surface-disabled);
+      color: var(--text-disabled);
+      border: 1px solid var(--border-disabled);
+    }
   }
 }
 

@@ -11,6 +11,12 @@
       "description": "PJ-SYNC-HUBの新規登録ページです。簡単な手順でアカウントを作成できます。"
     }
   },
+  "LoginLayout": {
+    "meta": {
+      "title": "ログイン",
+      "description": "PJ-SYNC-HUBのログインページです。"
+    }
+  },
   "DashboardLayout": {
     "meta": {
       "title": "ダッシュボード",
@@ -41,7 +47,8 @@
   },
   "SignupCard": {
     "title": "アカウント作成",
-    "or": "または"
+    "or": "または",
+    "hasAccount": "アカウントをお持ちの方はこちら"
   },
   "SignupForm": {
     "email": "メールアドレス",
@@ -49,7 +56,22 @@
     "password": "パスワード",
     "passwordConfirm": "パスワード（確認）",
     "reset": "リセット",
-    "signup": "登録"
+    "signup": "登録",
+    "forgotPassword": "パスワードを忘れた場合",
+    "login": "ログイン"
+  },
+  "LoginCard": {
+    "title": "ログイン",
+    "or": "または",
+    "noAccount": "アカウントをお持ちでない方はこちら"
+  },
+  "LoginForm": {
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "reset": "リセット",
+    "login": "ログイン",
+    "forgotPassword": "パスワードを忘れた場合",
+    "signup": "新規登録"
   },
   "GoogleAuthButton": {
     "signupWithGoogle": "Googleで登録",

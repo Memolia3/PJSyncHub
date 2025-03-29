@@ -6,6 +6,7 @@ export const COMPONENT = {
   LAYOUT: {
     LOCALE: "LocaleLayout",
     SIGNUP: "SignupLayout",
+    LOGIN: "LoginLayout",
     DASHBOARD: "DashboardLayout",
   },
   HEADER: "Header",
@@ -14,6 +15,8 @@ export const COMPONENT = {
   AUTH: {
     SIGNUPCARD: "SignupCard",
     SIGNUPFORM: "SignupForm",
+    LOGINCARD: "LoginCard",
+    LOGINFORM: "LoginForm",
     GOOGLEAUTHBUTTON: "GoogleAuthButton",
     GITHUBAUTHBUTTON: "GithubAuthButton",
   },
@@ -27,7 +30,8 @@ export const HOOK = {
 
 export const COMPONENT_PATH = {
   [COMPONENT.LAYOUT.LOCALE]: "/app/[locale]/layout",
-  [COMPONENT.LAYOUT.SIGNUP]: "/app/[locale]/signup/layout",
+  [COMPONENT.LAYOUT.SIGNUP]: "/app/[locale]/auth/signup/layout",
+  [COMPONENT.LAYOUT.LOGIN]: "/app/[locale]/auth/login/layout",
   [COMPONENT.LAYOUT.DASHBOARD]: "/app/[locale]/dashboard/layout",
   [COMPONENT.HEADER]: "/components/layouts/Header/Header",
   [COMPONENT.FOOTER]: "/components/layouts/Footer/Footer",

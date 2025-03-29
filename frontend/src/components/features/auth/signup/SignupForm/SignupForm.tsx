@@ -2,7 +2,7 @@
 
 import styles from "./SignupForm.module.scss";
 import { useState, useMemo } from "react";
-import { Text, Label, Input, Button } from "@/components/common";
+import { Text, Label, Input, Button, Router } from "@/components/common";
 import { useSignup } from "@/hooks/auth";
 import { COMPONENT } from "@/constants";
 import { VisibilityIcon, VisibilityOffIcon } from "@/components/common";
@@ -169,12 +169,19 @@ export default function SignupForm() {
       </div>
 
       <div className={styles.actions}>
-        <Button type="button" variant="secondary" onClick={handleReset}>
-          <Text>{t("reset")}</Text>
-        </Button>
-        <Button type="submit" disabled={!isFormValid}>
-          <Text>{t("signup")}</Text>
-        </Button>
+        <div className={styles.actions__button}>
+          <Button type="button" variant="secondary" onClick={handleReset}>
+            <Text>{t("reset")}</Text>
+          </Button>
+          <Button type="submit" disabled={!isFormValid}>
+            <Text>{t("signup")}</Text>
+          </Button>
+        </div>
+        <div className={styles.actions__link}>
+          <Router href="/auth/forgot-password">
+            <Text>{t("forgotPassword")}</Text>
+          </Router>
+        </div>
       </div>
     </form>
   );

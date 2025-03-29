@@ -3,15 +3,15 @@ import { generateCommonMetadata } from "@/utils";
 import type { Metadata } from "next";
 
 /**
- * 新規登録ページのメタデータを動的に生成
- * en.json, ja.jsonのSignupLayoutに対応
+ * ログインページのメタデータを動的に生成
+ * en.json, ja.jsonのLoginLayoutに対応
  * @returns メタデータ
  */
 export async function generateMetadata(): Promise<Metadata> {
-  return generateCommonMetadata(COMPONENT.LAYOUT.SIGNUP);
+  return generateCommonMetadata(COMPONENT.LAYOUT.LOGIN);
 }
 
-export default function SignupLayout({
+export default function LoginLayout({
   children,
 }: {
   children: React.ReactNode;

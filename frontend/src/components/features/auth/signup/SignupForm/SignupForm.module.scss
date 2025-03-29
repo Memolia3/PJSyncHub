@@ -74,15 +74,42 @@
 
 .actions {
   display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: center;
   gap: 16px;
-  justify-content: flex-end;
+
+  &__link {
+    text-align: left;
+
+    a {
+      color: var(--text-secondary);
+
+      &:hover {
+        color: var(--text-primary);
+      }
+    }
+  }
+
+  &__button {
+    display: flex;
+    gap: 16px;
+  }
 
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 12px;
 
-    button {
+    &__button {
+      flex-direction: column;
       width: 100%;
+      gap: 12px;
+      order: 1;
+    }
+
+    &__link {
+      text-align: center;
+      margin-top: 16px;
+      order: 2;
     }
   }
 }

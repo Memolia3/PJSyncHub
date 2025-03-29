@@ -11,6 +11,12 @@
       "description": "Create your PJ-SYNC-HUB account in a few simple steps."
     }
   },
+  "LoginLayout": {
+    "meta": {
+      "title": "Login",
+      "description": "Login to your PJ-SYNC-HUB account."
+    }
+  },
   "DashboardLayout": {
     "meta": {
       "title": "Dashboard",
@@ -41,7 +47,8 @@
   },
   "SignupCard": {
     "title": "Create Account",
-    "or": "OR"
+    "or": "OR",
+    "hasAccount": "Already have an account?"
   },
   "SignupForm": {
     "email": "Email",
@@ -49,7 +56,23 @@
     "password": "Password",
     "passwordConfirm": "Confirm Password",
     "reset": "Reset",
-    "signup": "Signup"
+    "signup": "Sign up",
+    "forgotPassword": "Forgot password?",
+    "login": "Login"
+  },
+  "LoginCard": {
+    "title": "Login",
+    "or": "OR",
+    "noAccount": "Don't have an account?"
+  },
+  "LoginForm": {
+    "email": "Email",
+    "password": "Password",
+    "reset": "Reset",
+    "login": "Login",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "signup": "Sign up"
   },
   "GoogleAuthButton": {
     "signupWithGoogle": "Sign up with Google",

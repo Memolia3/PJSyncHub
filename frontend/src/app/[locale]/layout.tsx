@@ -3,8 +3,9 @@ import "../globals.css";
 import type { Metadata } from "next";
 
 import { Footer, Header } from "@/components/layouts";
-import { COMPONENT, SITE_NAME } from "@/constants";
-import { getTranslations, getMessages } from "next-intl/server";
+import { COMPONENT } from "@/constants";
+import { generateCommonMetadata } from "@/utils";
+import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { SessionProvider } from "next-auth/react";
 
@@ -14,11 +15,7 @@ import { SessionProvider } from "next-auth/react";
  * @returns メタデータ
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations(COMPONENT.LAYOUT.LOCALE);
-  return {
-    title: `${SITE_NAME} | ${t("meta.title")}`,
-    description: t("meta.description"),
-  };
+  return generateCommonMetadata(COMPONENT.LAYOUT.LOCALE);
 }
 
 /**

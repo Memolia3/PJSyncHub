@@ -1,3 +1,5 @@
+import styles from "./signup.module.scss";
+
 import { SignupCard } from "@/components/features/auth";
 
 /**
@@ -7,8 +9,10 @@ import { SignupCard } from "@/components/features/auth";
  */
 export default function SignupPage() {
   return (
-    <main>
-      <SignupCard />
-    </main>
+    <div className={styles.container}>
+      <main className={styles.main}>
+        <SignupCard />
+      </main>
+    </div>
   );
 }

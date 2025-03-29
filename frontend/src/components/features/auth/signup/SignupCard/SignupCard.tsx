@@ -2,7 +2,7 @@
 
 import styles from "./SignupCard.module.scss";
 
-import { Text } from "@/components/common";
+import { Text, Router } from "@/components/common";
 import { COMPONENT } from "@/constants";
 import {
   SignupForm,
@@ -26,13 +26,13 @@ export default function SignupCard() {
         <div className={styles.title}>
           <Text variant="h3">{t("title")}</Text>
         </div>
-
         <SignupForm />
-
         <div className={styles.divider}>
           <span>{t("or")}</span>
         </div>
-
+        <Router href="/auth/login" className={styles.link}>
+          <Text>{t("hasAccount")}</Text>
+        </Router>
         <GoogleAuthButton mode="signup" />
         <GithubAuthButton mode="signup" />
       </div>
