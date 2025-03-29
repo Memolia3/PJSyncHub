@@ -30,11 +30,11 @@ export default function SignupCard() {
         <div className={styles.divider}>
           <span>{t("or")}</span>
         </div>
+        <GoogleAuthButton mode="signup" />
+        <GithubAuthButton mode="signup" />
         <Router href="/auth/login" className={styles.link}>
           <Text>{t("hasAccount")}</Text>
         </Router>
-        <GoogleAuthButton mode="signup" />
-        <GithubAuthButton mode="signup" />
       </div>
     </div>
   );

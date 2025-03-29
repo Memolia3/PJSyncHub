@@ -30,11 +30,11 @@ export default function LoginCard() {
         <div className={styles.divider}>
           <span>{t("or")}</span>
         </div>
+        <GoogleAuthButton mode="login" />
+        <GithubAuthButton mode="login" />
         <Router href="/auth/signup" className={styles.link}>
           <Text>{t("noAccount")}</Text>
         </Router>
-        <GoogleAuthButton mode="login" />
-        <GithubAuthButton mode="login" />
       </div>
     </div>
   );
