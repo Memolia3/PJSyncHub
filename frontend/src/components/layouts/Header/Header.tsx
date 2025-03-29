@@ -1,4 +1,4 @@
-"use client"; // クライアントコンポーネントに変更
+"use client";
 
 import Image from "next/image";
 import styles from "./Header.module.scss";

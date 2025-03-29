@@ -44,19 +44,10 @@ export const useSignup = (componentName: string) => {
   const { formData, errors, handleChange, isValid, resetForm } =
     useFormValidation(initialData, validationRules);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (isValid()) {
-      // GraphQL mutation
-      console.log("送信可能", formData);
-    }
-  };
-
   return {
     formData,
     errors,
     handleChange,
-    handleSubmit,
     resetForm,
     t,
     isValid,

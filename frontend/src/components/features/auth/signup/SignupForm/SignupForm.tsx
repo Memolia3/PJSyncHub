@@ -6,30 +6,29 @@ import { Text, Label, Input, Button, Router } from "@/components/common";
 import { useSignup } from "@/hooks/auth";
 import { COMPONENT } from "@/constants";
 import { VisibilityIcon, VisibilityOffIcon } from "@/components/common";
+import { useRouter } from "@/i18n/routing";
+import { signup } from "@/app/_actions/auth";
+import { useSession } from "next-auth/react";
 
 /**
  * 新規登録フォームコンポーネント
  * @returns 新規登録フォームコンポーネント
  */
 export default function SignupForm() {
+  const { formData, errors, handleChange, resetForm, t, isValid } = useSignup(
+    COMPONENT.AUTH.SIGNUPFORM
+  );
+  const router = useRouter();
+  const { update: updateSession } = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [dirtyFields, setDirtyFields] = useState({
     email: false,
     name: false,
     password: false,
     passwordConfirm: false,
   });
-
-  const {
-    formData,
-    errors,
-    handleChange,
-    handleSubmit,
-    resetForm,
-    t,
-    isValid,
-  } = useSignup(COMPONENT.AUTH.SIGNUPFORM);
 
   const isFormValid = useMemo(() => isValid(), [formData]);
 
@@ -52,6 +51,32 @@ export default function SignupForm() {
       passwordConfirm: false,
     });
     resetForm();
+  };
+
+  /**
+   * サインアップフォームの送信
+   * サーバーアクション
+   * @param e イベント
+   */
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!isValid() || isLoading) return;
+
+    try {
+      setIsLoading(true);
+      const result = await signup(formData);
+
+      if (result.error) {
+        console.error(result.error);
+        return;
+      }
+
+      // セッションを更新
+      await updateSession();
+      router.push("/dashboard");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -173,7 +198,12 @@ export default function SignupForm() {
           <Button type="button" variant="secondary" onClick={handleReset}>
             <Text>{t("reset")}</Text>
           </Button>
-          <Button type="submit" disabled={!isFormValid}>
+          <Button
+            type="submit"
+            variant="primary"
+            buttonSize="medium"
+            disabled={!isFormValid}
+          >
             <Text>{t("signup")}</Text>
           </Button>
         </div>

@@ -29,11 +29,7 @@ export default function Button({
       {startAdornment && (
         <span className={styles.startAdornment}>{startAdornment}</span>
       )}
-      {isLoading ? (
-        <span className={styles.loading}>Loading...</span>
-      ) : (
-        children
-      )}
+      {isLoading ? <span className={styles.loading}></span> : children}
     </button>
   );
 }

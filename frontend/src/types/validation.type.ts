@@ -1,16 +1,21 @@
 // バリデーションルール
-export type ValidationRules = {
+export interface ValidationRule {
   required?: boolean;
   minLength?: number;
   maxLength?: number;
   pattern?: RegExp;
   match?: string;
   custom?: (value: string) => boolean;
+}
+
+// バリデーションルール
+export type ValidationRules<T> = {
+  [K in keyof T]: ValidationRule;
 };
 
 // バリデーションルール
 export type Validations = {
-  [key: string]: ValidationRules;
+  [key: string]: ValidationRules<any>;
 };
 
 // フォームに入力するデータ

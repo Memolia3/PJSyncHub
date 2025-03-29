@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Github from "next-auth/providers/github";
+import Credentials from "next-auth/providers/credentials";
 
 import type { Session } from "next-auth";
 import { authQueries } from "@/graphql";
@@ -9,6 +10,54 @@ import { fetchMutation } from "@/graphql/utils/client.util";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [
+    Credentials({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        try {
+          if (!credentials) {
+            throw new Error("認証情報が必要です");
+          }
+
+          const { data, errors } = await fetchMutation(authQueries.login, {
+            input: {
+              email: credentials.email,
+              password: credentials.password,
+            },
+          });
+
+          if (errors) {
+            // GraphQLのエラーメッセージをそのまま返す
+            throw new Error(errors[0]?.message || "認証に失敗しました");
+          }
+
+          if (!data?.login) {
+            throw new Error("ログインに失敗しました");
+          }
+
+          const { user, tokens } = data.login;
+          if (!user || !tokens) {
+            throw new Error("サーバーからの応答が不正です");
+          }
+
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            avatarUrl: user.avatarUrl,
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+            expiresAt: tokens.expiresAt,
+          };
+        } catch (error) {
+          // エラーメッセージを上位に伝播
+          throw error;
+        }
+      },
+    }),
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,

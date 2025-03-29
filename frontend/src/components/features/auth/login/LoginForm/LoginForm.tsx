@@ -7,22 +7,22 @@ import { VisibilityIcon, VisibilityOffIcon } from "@/components/common/icons";
 import { COMPONENT } from "@/constants";
 import { useLogin } from "@/hooks";
 import { useState, useMemo } from "react";
+import { useRouter } from "@/i18n/routing";
+import { login } from "@/app/_actions/auth";
+import { useSession } from "next-auth/react";
 
 /**
  * ログインフォーム
  * @returns ログインフォームコンポーネント
  */
 export default function LoginForm() {
-  const {
-    formData,
-    errors,
-    handleChange,
-    handleSubmit,
-    resetForm,
-    t,
-    isValid,
-  } = useLogin(COMPONENT.AUTH.LOGINFORM);
+  const { formData, errors, handleChange, resetForm, t, isValid } = useLogin(
+    COMPONENT.AUTH.LOGINFORM
+  );
+  const router = useRouter();
+  const { update: updateSession } = useSession();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [dirtyFields, setDirtyFields] = useState({
     email: false,
     password: false,
@@ -47,6 +47,32 @@ export default function LoginForm() {
       password: false,
     });
     resetForm();
+  };
+
+  /**
+   * ログインフォームの送信
+   * サーバーアクション
+   * @param e イベント
+   */
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!isValid() || isLoading) return;
+
+    try {
+      setIsLoading(true);
+      const result = await login(formData);
+
+      if (result.error) {
+        console.error(result.error);
+        return;
+      }
+
+      // セッションを更新
+      await updateSession();
+      router.push("/dashboard");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -121,7 +147,8 @@ export default function LoginForm() {
             type="submit"
             variant="primary"
             buttonSize="medium"
-            disabled={!isFormValid}
+            disabled={!isFormValid || isLoading}
+            isLoading={isLoading}
           >
             <Text>{t("login")}</Text>
           </Button>

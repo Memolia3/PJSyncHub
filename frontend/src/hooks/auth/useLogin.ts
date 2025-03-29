@@ -1,8 +1,11 @@
 import { useTranslations } from "next-intl";
 import { useFormValidation } from "./useFormValidation";
+import { useRouter } from "next/navigation";
+import { login } from "@/app/_actions/auth";
+import type { LoginCredentials } from "@/types/auth.type";
 
 // 初期データ
-const initialData = {
+const initialData: LoginCredentials = {
   email: "",
   password: "",
 };
@@ -29,21 +32,12 @@ const validationRules = {
 export const useLogin = (componentName: string) => {
   const t = useTranslations(componentName);
   const { formData, errors, handleChange, isValid, resetForm } =
-    useFormValidation(initialData, validationRules);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (isValid()) {
-      // GraphQL mutation
-      console.log("送信可能", formData);
-    }
-  };
+    useFormValidation<LoginCredentials>(initialData, validationRules);
 
   return {
     formData,
     errors,
     handleChange,
-    handleSubmit,
     resetForm,
     t,
     isValid,

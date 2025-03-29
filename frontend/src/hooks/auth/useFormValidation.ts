@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, useCallback } from "react";
 import { useTranslations } from "next-intl";
 
-import { FormData, Validations, FormErrors } from "@/types";
+import { FormErrors, ValidationRules } from "@/types";
 import { HOOK } from "@/constants";
 
 /**
@@ -10,12 +10,12 @@ import { HOOK } from "@/constants";
  * @param validations 検証ルール
  * @returns フォームの入力値とエラー
  */
-export const useFormValidation = (
-  initialData: FormData,
-  validations: Validations
+export const useFormValidation = <T extends Record<string, any>>(
+  initialData: T,
+  validationRules: ValidationRules<T>
 ) => {
   const t = useTranslations(HOOK.AUTH.FORM_VALIDATION);
-  const [formData, setFormData] = useState<FormData>(initialData);
+  const [formData, setFormData] = useState<T>(initialData);
   const [errors, setErrors] = useState<FormErrors>({});
 
   /**
@@ -67,7 +67,7 @@ export const useFormValidation = (
    * @returns エラーメッセージ
    */
   const validateField = (name: string, value: string) => {
-    const rules = validations[name];
+    const rules = validationRules[name];
     if (!rules) return undefined;
 
     if (rules.required && !value) {
@@ -121,7 +121,7 @@ export const useFormValidation = (
     const newErrors: FormErrors = {};
     let isValid = true;
 
-    Object.keys(validations).forEach((key) => {
+    Object.keys(validationRules).forEach((key) => {
       const error = validateField(key, formData[key]);
       if (error) {
         newErrors[key] = error;
@@ -131,7 +131,7 @@ export const useFormValidation = (
 
     setErrors(newErrors);
     return isValid;
-  }, [formData, validations, validateField]);
+  }, [formData, validationRules, validateField]);
 
   /**
    * フォームの入力値をリセットする
