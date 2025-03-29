@@ -3,6 +3,9 @@
 import { signIn, signOut } from "@/auth";
 import { headers } from "next/headers";
 import { OAUTH_PROVIDER } from "@/constants";
+import { authQueries, fetchMutation } from "@/graphql";
+import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
 
 /**
  * Google認証を行う
@@ -45,3 +48,27 @@ export const handleSignOut = async () => {
     redirectTo: `/${locale}`,
   });
 };
+
+/**
+ * トークンを更新する
+ * @returns トークン更新成功時にはtrueを返す
+ */
+export async function refreshToken() {
+  try {
+    const session = await auth();
+    if (!session?.refreshToken) return false;
+
+    const { data } = await fetchMutation(authQueries.refreshToken, {
+      refreshToken: session.refreshToken,
+    });
+
+    if (data?.refreshToken) {
+      revalidatePath("/");
+      return true;
+    }
+  } catch (error) {
+    console.error("トークン更新に失敗:", error);
+    return false;
+  }
+  return false;
+}

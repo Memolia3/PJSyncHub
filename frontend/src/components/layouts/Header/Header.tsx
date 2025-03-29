@@ -22,7 +22,7 @@ import { usePathname } from "next/navigation";
 export default function Header() {
   const t = useTranslations(COMPONENT.HEADER);
   const { data: session, status } = useSession();
-  const isLoggedIn = status === "authenticated";
+  const isLoggedIn = status === "authenticated" && session?.accessToken;
   const [showDropdown, setShowDropdown] = useState(false);
   const pathname = usePathname();
 

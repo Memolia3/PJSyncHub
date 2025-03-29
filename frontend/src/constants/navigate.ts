@@ -1,5 +1,5 @@
 /**
- * ナビゲーション
+ * パスやナビゲーションのパスを取り扱う
  */
 
 // インデックスページのナビゲーション
@@ -33,3 +33,9 @@ export const LOGIN_NAVIGATE = [
     label: "timelines",
   },
 ];
+
+// スタートページのパスパターン
+export const START_PAGE_PATH = ["/", "/en", "/ja"];
+
+// 認証ページのパスパターン
+export const AUTH_PAGE_PATH = ["/auth", "/en/auth", "/ja/auth"];

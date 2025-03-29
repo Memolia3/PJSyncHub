@@ -3,7 +3,8 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { routing } from "./i18n/routing";
-import { getToken } from "next-auth/jwt";
+import { refreshToken } from "@/lib/actions/auth";
+import { LOGIN_NAVIGATE } from "@/constants";
 
 // next-intlのミドルウェア
 const intlMiddleware = createMiddleware(routing);
@@ -15,12 +16,11 @@ const isStartPage = (pathname: string) => {
 
 // 認証が必要なパスかチェック
 const isProtectedRoute = (pathname: string) => {
-  const protectedPaths = ["/dashboard"];
-  return protectedPaths.some(
-    (path) =>
-      pathname === path ||
-      pathname.startsWith(`/en${path}`) ||
-      pathname.startsWith(`/ja${path}`)
+  return LOGIN_NAVIGATE.some(
+    ({ href }) =>
+      pathname === href ||
+      pathname.startsWith(`/en${href}`) ||
+      pathname.startsWith(`/ja${href}`)
   );
 };
 
@@ -34,69 +34,49 @@ const isAuthPage = (pathname: string) => {
 };
 
 export async function middleware(request: NextRequest) {
-  const session = await auth();
   const pathname = request.nextUrl.pathname;
   const locale = pathname.startsWith("/en") ? "en" : "ja";
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
 
-  // スタートページの場合
-  if (isStartPage(pathname)) {
-    if (session) {
-      // ログイン済みの場合はダッシュボードへ
-      return NextResponse.redirect(
-        new URL(`/${locale}/dashboard`, request.url)
-      );
-    }
-    // 未ログインの場合はそのまま表示
-  }
-
-  // 認証ページの場合
-  if (isAuthPage(pathname)) {
-    if (session) {
-      // 既にログインしている場合はダッシュボードへ
-      return NextResponse.redirect(
-        new URL(`/${locale}/dashboard`, request.url)
-      );
-    }
-  }
+  // セッションチェック
+  const session = await auth();
 
   // 保護されたルートの場合
   if (isProtectedRoute(pathname)) {
-    if (!session) {
-      // 未認証の場合はログインページへ
-      return NextResponse.redirect(
-        new URL(`/${locale}/auth/login`, request.url)
-      );
-    }
-  }
-
-  // 認証が必要なパスの場合
-  if (pathname.startsWith(`/${locale}/api/`)) {
-    if (!token) {
+    // セッションまたはアクセストークンが存在しない場合はログインページにリダイレクト
+    if (!session || !session.accessToken) {
       return NextResponse.redirect(
         new URL(`/${locale}/auth/login`, request.url)
       );
     }
 
     // トークンエラーがある場合はログアウト
-    if (token.error === "RefreshAccessTokenError") {
+    if (session.error === "RefreshAccessTokenError") {
       return NextResponse.redirect(
         new URL(`/${locale}/auth/login`, request.url)
       );
     }
 
     // アクセストークンの有効期限チェック
-    if (Number(token?.expiresAt) * 1000 < Date.now()) {
-      return NextResponse.redirect(
-        new URL(`/${locale}/auth/login`, request.url)
-      );
+    if (Number(session.expiresAt) * 1000 < Date.now()) {
+      const success = await refreshToken();
+      if (!success) {
+        return NextResponse.redirect(
+          new URL(`/${locale}/auth/login`, request.url)
+        );
+      }
     }
   }
 
-  // 最後にi18nミドルウェアを実行
+  // 認証ページまたはスタートページの場合で、ログイン済み(セッション+アクセストークンが存在する場合)
+  if (
+    (isStartPage(pathname) || isAuthPage(pathname)) &&
+    session &&
+    session.accessToken
+  ) {
+    return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+  }
+
+  // 最後にi18nミドルウェアを実行 - 言語に合わせてパスを返す
   return intlMiddleware(request);
 }
 

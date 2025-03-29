@@ -35,7 +35,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         account?.provider === OAUTH_PROVIDER.GITHUB
       ) {
         try {
-          // OAuth認証実行
           const { data } = await fetchMutation(authQueries.oauthAuthenticate, {
             input: {
               email: user.email,
@@ -44,30 +43,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             },
           });
 
-          // 認証成功時のセッション情報を更新
-          if (data?.oauthAuthenticate) {
-            Object.assign(user, {
-              id: data.oauthAuthenticate.user.id,
-              name: data.oauthAuthenticate.user.name,
-              email: data.oauthAuthenticate.user.email,
-              avatarUrl: data.oauthAuthenticate.user.avatarUrl,
-              accessToken: data.oauthAuthenticate.tokens.accessToken,
-              refreshToken: data.oauthAuthenticate.tokens.refreshToken,
-              expiresAt: data.oauthAuthenticate.tokens.expiresAt,
-            });
-          } else {
+          if (!data?.oauthAuthenticate) {
             throw new Error("OAuth認証に失敗しました");
           }
+
+          // userオブジェクトを更新
+          Object.assign(user, {
+            id: data.oauthAuthenticate.user.id,
+            accessToken: data.oauthAuthenticate.tokens.accessToken,
+            refreshToken: data.oauthAuthenticate.tokens.refreshToken,
+            expiresAt: data.oauthAuthenticate.tokens.expiresAt,
+            avatarUrl: data.oauthAuthenticate.user.avatarUrl,
+          });
         } catch (error) {
-          // エラーメッセージをコンテナに出力
-          console.error("OAuth認証に失敗 : ", error);
-          // 認証失敗時は元のページに戻る
-          if (typeof window !== "undefined") {
-            const returnUrl = new URL(window.location.href).searchParams.get(
-              "callbackUrl"
-            );
-            if (returnUrl) window.location.href = returnUrl;
-          }
+          console.error("OAuth認証に失敗:", error);
         }
       }
     },
@@ -81,61 +70,82 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
   },
   callbacks: {
-    // JWTトークンの更新
     async jwt({ token, user, account }) {
-      // 初回サインイン時
+      // 初回サインイン時またはユーザー情報更新時
       if (account && user) {
-        return {
-          ...token,
-          accessToken: user.accessToken,
-          refreshToken: user.refreshToken,
-          expiresAt: user.expiresAt,
-        };
+        try {
+          const { data } = await fetchMutation(authQueries.oauthAuthenticate, {
+            input: {
+              email: user.email,
+              name: user.name,
+              avatarUrl: user.image,
+            },
+          });
+
+          if (!data?.oauthAuthenticate) {
+            throw new Error("OAuth認証に失敗しました");
+          }
+
+          // トークン情報を更新
+          return {
+            ...token,
+            id: data.oauthAuthenticate.user.id,
+            accessToken: data.oauthAuthenticate.tokens.accessToken,
+            refreshToken: data.oauthAuthenticate.tokens.refreshToken,
+            expiresAt: data.oauthAuthenticate.tokens.expiresAt,
+            avatarUrl: data.oauthAuthenticate.user.avatarUrl,
+          };
+        } catch (error) {
+          console.error("OAuth認証に失敗:", error);
+          return { ...token, error: "RefreshAccessTokenError" };
+        }
       }
 
       // トークンの有効期限チェック
-      if (Date.now() < Number(token.expiresAt) * 1000) {
-        return token;
-      }
-
-      // トークンの更新
-      try {
-        const { data } = await fetchMutation(authQueries.refreshToken, {
-          refreshToken: token.refreshToken,
-        });
-
-        // トークンの更新成功時
-        if (data?.refreshToken) {
-          return {
-            ...token,
-            accessToken: data.refreshToken.accessToken,
-            refreshToken: data.refreshToken.refreshToken,
-            expiresAt: data.refreshToken.expiresAt,
-            error: undefined,
-          };
+      if (!token.expiresAt || Date.now() >= Number(token.expiresAt) * 1000) {
+        if (!token.refreshToken) {
+          return { ...token, error: "RefreshAccessTokenError" };
         }
-      } catch (error) {
-        // トークンの更新失敗時
-        return {
-          ...token,
-          error: "RefreshAccessTokenError",
-        };
+
+        try {
+          // リフレッシュトークンを使用して新しいアクセストークンを取得
+          const { data } = await fetchMutation(authQueries.refreshToken, {
+            refreshToken: token.refreshToken,
+          });
+
+          if (data?.refreshToken) {
+            return {
+              ...token,
+              accessToken: data.refreshToken.accessToken,
+              refreshToken: data.refreshToken.refreshToken,
+              expiresAt: data.refreshToken.expiresAt,
+              error: undefined,
+            };
+          }
+        } catch (error) {
+          return { ...token, error: "RefreshAccessTokenError" };
+        }
       }
 
       return token;
     },
-    // セッション情報の更新
+    /**
+     * セッション情報を更新
+     * セッションベースでトークンを更新
+     * @param session セッション情報
+     * @param token トークン情報
+     * @returns セッション情報
+     */
     async session({ session, token }): Promise<Session> {
       return {
         ...session,
         user: {
           ...session.user,
-          id: token.sub ?? undefined,
+          id: token.id?.toString() ?? undefined,
           name: token.name ?? undefined,
           email: token.email ?? undefined,
           avatarUrl: token.picture ?? undefined,
         },
-        // APIリクエスト用のトークン情報を追加
         accessToken: token.accessToken as string | undefined,
         refreshToken: token.refreshToken as string | undefined,
         expiresAt: token.expiresAt as number | undefined,

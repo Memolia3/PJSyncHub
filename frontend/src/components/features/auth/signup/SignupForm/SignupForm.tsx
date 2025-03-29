@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./SignupForm.module.scss";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Text, Label, Input, Button } from "@/components/common";
 import { useSignup } from "@/hooks/auth";
 import { COMPONENT } from "@/constants";
@@ -14,6 +14,13 @@ import { VisibilityIcon, VisibilityOffIcon } from "@/components/common";
 export default function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [dirtyFields, setDirtyFields] = useState({
+    email: false,
+    name: false,
+    password: false,
+    passwordConfirm: false,
+  });
+
   const {
     formData,
     errors,
@@ -24,8 +31,28 @@ export default function SignupForm() {
     isValid,
   } = useSignup(COMPONENT.AUTH.SIGNUPFORM);
 
-  // isFormValidをuseMemoで計算
   const isFormValid = useMemo(() => isValid(), [formData]);
+
+  // フォームの入力があった時
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name } = e.target;
+    setDirtyFields((prev) => ({
+      ...prev,
+      [name]: true,
+    }));
+    handleChange(e);
+  };
+
+  // リセット時にフラグも戻す
+  const handleReset = () => {
+    setDirtyFields({
+      email: false,
+      name: false,
+      password: false,
+      passwordConfirm: false,
+    });
+    resetForm();
+  };
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -41,8 +68,8 @@ export default function SignupForm() {
             fullWidth
             name="email"
             value={formData.email}
-            onChange={handleChange}
-            error={errors.email}
+            onChange={handleInputChange}
+            error={dirtyFields.email ? errors.email : undefined}
           />
         </div>
       </div>
@@ -59,8 +86,8 @@ export default function SignupForm() {
             fullWidth
             name="name"
             value={formData.name}
-            onChange={handleChange}
-            error={errors.name}
+            onChange={handleInputChange}
+            error={dirtyFields.name ? errors.name : undefined}
           />
         </div>
       </div>
@@ -77,8 +104,8 @@ export default function SignupForm() {
             fullWidth
             name="password"
             value={formData.password}
-            onChange={handleChange}
-            error={errors.password}
+            onChange={handleInputChange}
+            error={dirtyFields.password ? errors.password : undefined}
             endAdornment={
               <div
                 className={styles.togglePassword}
@@ -113,8 +140,10 @@ export default function SignupForm() {
             fullWidth
             name="passwordConfirm"
             value={formData.passwordConfirm}
-            onChange={handleChange}
-            error={errors.passwordConfirm}
+            onChange={handleInputChange}
+            error={
+              dirtyFields.passwordConfirm ? errors.passwordConfirm : undefined
+            }
             endAdornment={
               <div
                 className={styles.togglePassword}
@@ -140,7 +169,7 @@ export default function SignupForm() {
       </div>
 
       <div className={styles.actions}>
-        <Button type="button" variant="secondary" onClick={resetForm}>
+        <Button type="button" variant="secondary" onClick={handleReset}>
           <Text>{t("reset")}</Text>
         </Button>
         <Button type="submit" disabled={!isFormValid}>

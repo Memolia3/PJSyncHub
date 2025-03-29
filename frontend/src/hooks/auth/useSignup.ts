@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { useFormValidation } from "./useFormValidation";
 
+// 初期データ
 const initialData = {
   email: "",
   name: "",
@@ -8,6 +9,7 @@ const initialData = {
   passwordConfirm: "",
 };
 
+// バリデーションルール
 const validationRules = {
   email: {
     required: true,
@@ -32,6 +34,11 @@ const validationRules = {
   },
 };
 
+/**
+ * サインアップフォームのフック
+ * @param componentName コンポーネント名
+ * @returns サインアップフォームのフック
+ */
 export const useSignup = (componentName: string) => {
   const t = useTranslations(componentName);
   const { formData, errors, handleChange, isValid, resetForm } =

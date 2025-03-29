@@ -1,6 +1,7 @@
 use crate::configs::env::Env;
 use crate::configs::storage::StorageClient;
 use crate::models::relational_db::user::{self, Entity as User};
+use crate::schemas::relational_db::user::types::*;
 use crate::utils::auth::{AuthTokens, AuthUtils};
 use argon2::{
     password_hash::{rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
@@ -9,63 +10,13 @@ use argon2::{
 use async_graphql::*;
 use jsonwebtoken::{encode, DecodingKey, EncodingKey, Header, Validation};
 use sea_orm::*;
-use serde::{Deserialize, Serialize};
 use std::io::Read;
 use std::sync::Arc;
 use uuid::Uuid;
 
-/// userテーブルの入力
-#[derive(InputObject)]
-struct CreateUserInput {
-    email: String,
-    name: String,
-    password: String,
-    avatar_url: Option<String>,
-}
-
-/// userテーブルの更新入力
-#[derive(InputObject)]
-struct UpdateUserInput {
-    name: Option<String>,
-    email: Option<String>,
-    avatar_url: Option<Upload>,
-}
-
-/// userテーブルのクエリ
-#[derive(Default)]
-pub struct UserQuery;
-
 /// userテーブルのミューテーション
 #[derive(Default)]
 pub struct UserMutation;
-
-/// userテーブルのクエリの実装
-#[Object]
-impl UserQuery {
-    /// ユーザ一覧を取得
-    async fn users(&self, ctx: &Context<'_>) -> Result<Vec<user::Model>> {
-        let db = ctx.data::<DatabaseConnection>()?;
-        let users = User::find().all(db).await?;
-        Ok(users)
-    }
-
-    /// uuidからユーザを取得
-    async fn user_by_id(&self, ctx: &Context<'_>, id: Uuid) -> Result<Option<user::Model>> {
-        let db = ctx.data::<DatabaseConnection>()?;
-        let user = User::find_by_id(id).one(db).await?;
-        Ok(user)
-    }
-
-    /// メールアドレスからユーザを取得
-    async fn user_by_email(&self, ctx: &Context<'_>, email: String) -> Result<Option<user::Model>> {
-        let db = ctx.data::<DatabaseConnection>()?;
-        let user = User::find()
-            .filter(user::Column::Email.eq(email))
-            .one(db)
-            .await?;
-        Ok(user)
-    }
-}
 
 /// userテーブルのミューテーションの実装
 #[Object]
@@ -134,7 +85,7 @@ impl UserMutation {
 
         // ユーザーを検索
         let user = User::find()
-            .filter(user::Column::Email.eq(input.email))
+            .filter(user::Column::Email.eq(&input.email))
             .one(db)
             .await?
             .ok_or_else(|| Error::new("Invalid credentials"))?;
@@ -231,37 +182,4 @@ impl UserMutation {
             expires_at: access_token_exp,
         })
     }
-}
-
-#[derive(InputObject)]
-struct LoginInput {
-    email: String,
-    password: String,
-}
-
-#[derive(SimpleObject)]
-struct LoginResponse {
-    tokens: AuthTokens,
-    user: user::Model,
-}
-
-#[derive(Serialize, Deserialize, PartialEq)]
-enum TokenType {
-    Access,
-    Refresh,
-}
-
-#[derive(Serialize, Deserialize)]
-struct Claims {
-    sub: uuid::Uuid,
-    exp: usize,
-    token_type: TokenType,
-}
-
-#[derive(InputObject)]
-#[graphql(name = "OAuthAuthenticateInput")]
-struct OAuthAuthenticateInput {
-    email: String,
-    name: String,
-    avatar_url: Option<String>,
 }
