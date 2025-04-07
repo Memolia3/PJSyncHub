@@ -7,55 +7,18 @@ import type { Session } from "next-auth";
 import { authQueries } from "@/graphql";
 import { OAUTH_PROVIDER } from "@/constants";
 import { fetchMutation } from "@/graphql/utils/client.util";
+import type { OAuthResponse, RefreshTokenResponse } from "@/types";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { type: "text" },
+        password: { type: "password" },
       },
       async authorize(credentials) {
-        try {
-          if (!credentials) {
-            throw new Error("認証情報が必要です");
-          }
-
-          const { data, errors } = await fetchMutation(authQueries.login, {
-            input: {
-              email: credentials.email,
-              password: credentials.password,
-            },
-          });
-
-          if (errors) {
-            // GraphQLのエラーメッセージをそのまま返す
-            throw new Error(errors[0]?.message || "認証に失敗しました");
-          }
-
-          if (!data?.login) {
-            throw new Error("ログインに失敗しました");
-          }
-
-          const { user, tokens } = data.login;
-          if (!user || !tokens) {
-            throw new Error("サーバーからの応答が不正です");
-          }
-
-          return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            avatarUrl: user.avatarUrl,
-            accessToken: tokens.accessToken,
-            refreshToken: tokens.refreshToken,
-            expiresAt: tokens.expiresAt,
-          };
-        } catch (error) {
-          // エラーメッセージを上位に伝播
-          throw error;
-        }
+        return credentials as any;
       },
     }),
     Google({
@@ -84,16 +47,19 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         account?.provider === OAUTH_PROVIDER.GITHUB
       ) {
         try {
-          const { data } = await fetchMutation(authQueries.oauthAuthenticate, {
-            input: {
-              email: user.email,
-              name: user.name,
-              avatarUrl: user.image,
-            },
-          });
+          const { data } = await fetchMutation<OAuthResponse>(
+            authQueries.oauthAuthenticate,
+            {
+              input: {
+                email: user.email,
+                name: user.name,
+                avatarUrl: user.image,
+              },
+            }
+          );
 
           if (!data?.oauthAuthenticate) {
-            throw new Error("OAuth認証に失敗しました");
+            return;
           }
 
           // userオブジェクトを更新
@@ -123,13 +89,16 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       // 初回サインイン時またはユーザー情報更新時
       if (account && user) {
         try {
-          const { data } = await fetchMutation(authQueries.oauthAuthenticate, {
-            input: {
-              email: user.email,
-              name: user.name,
-              avatarUrl: user.image,
-            },
-          });
+          const { data } = await fetchMutation<OAuthResponse>(
+            authQueries.oauthAuthenticate,
+            {
+              input: {
+                email: user.email,
+                name: user.name,
+                avatarUrl: user.image,
+              },
+            }
+          );
 
           if (!data?.oauthAuthenticate) {
             throw new Error("OAuth認証に失敗しました");
@@ -158,9 +127,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         try {
           // リフレッシュトークンを使用して新しいアクセストークンを取得
-          const { data } = await fetchMutation(authQueries.refreshToken, {
-            refreshToken: token.refreshToken,
-          });
+          const { data } = await fetchMutation<RefreshTokenResponse>(
+            authQueries.refreshToken,
+            {
+              refreshToken: token.refreshToken,
+            }
+          );
 
           if (data?.refreshToken) {
             return {

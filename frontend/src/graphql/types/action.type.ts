@@ -10,3 +10,22 @@ export interface GraphQLRequestParams {
   variables?: Record<string, unknown>;
   options?: GraphQLRequestOptions;
 }
+
+export interface GraphQLResponse<T = any> {
+  data: T | null;
+  errors?: Array<{
+    message: string;
+    locations: Array<{
+      line: number;
+      column: number;
+    }>;
+    path: string[];
+    extensions?: {
+      validationErrors?: {
+        [key: string]: string[];
+      };
+    };
+  }>;
+}
+
+export type GraphQLRequestResult<T> = Promise<GraphQLResponse<T>>;

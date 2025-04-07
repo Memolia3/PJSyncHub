@@ -27,3 +27,16 @@ export type FormData = {
 export type FormErrors = {
   [key: string]: string | undefined;
 };
+
+// バリデーションエラー
+export interface ValidationErrors {
+  [key: string]: string[];
+}
+
+// GraphQLエラー
+export interface GraphQLError {
+  message: string;
+  extensions?: {
+    validationErrors?: ValidationErrors;
+  };
+}

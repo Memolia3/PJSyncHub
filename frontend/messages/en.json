@@ -87,6 +87,7 @@
     "minLength": "Please enter at least {count} characters",
     "maxLength": "Please enter no more than {count} characters",
     "invalidFormat": "Invalid format",
+    "invalidValue": "Invalid value",
     "mismatch": "Values do not match",
     "lowercase": "lowercase letter",
     "uppercase": "uppercase letter",

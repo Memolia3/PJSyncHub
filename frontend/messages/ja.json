@@ -86,6 +86,7 @@
     "minLength": "{count}文字以上で入力してください",
     "maxLength": "{count}文字以下で入力してください",
     "invalidFormat": "入力形式が正しくありません",
+    "invalidValue": "入力値が正しくありません",
     "mismatch": "入力値が一致しません",
     "lowercase": "小文字",
     "uppercase": "大文字",

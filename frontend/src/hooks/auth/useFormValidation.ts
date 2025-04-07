@@ -70,33 +70,33 @@ export const useFormValidation = <T extends Record<string, any>>(
     const rules = validationRules[name];
     if (!rules) return undefined;
 
-    if (rules.required && !value) {
-      return t("required");
-    }
+    // if (rules.required && !value) {
+    //   return t("required");
+    // }
 
-    if (name === "password") {
-      return validatePassword(value);
-    }
+    // if (name === "password") {
+    //   return validatePassword(value);
+    // }
 
-    if (rules.minLength && value.length < rules.minLength) {
-      return t("minLength", { count: rules.minLength });
-    }
+    // if (rules.minLength && value.length < rules.minLength) {
+    //   return t("minLength", { count: rules.minLength });
+    // }
 
-    if (rules.maxLength && value.length > rules.maxLength) {
-      return t("maxLength", { count: rules.maxLength });
-    }
+    // if (rules.maxLength && value.length > rules.maxLength) {
+    //   return t("maxLength", { count: rules.maxLength });
+    // }
 
-    if (rules.pattern && !rules.pattern.test(value)) {
-      return t("invalidFormat");
-    }
+    // if (rules.pattern && !rules.pattern.test(value)) {
+    //   return t("invalidFormat");
+    // }
 
-    if (rules.match && value !== formData[rules.match]) {
-      return t("mismatch");
-    }
+    // if (rules.match && value !== formData[rules.match]) {
+    //   return t("mismatch");
+    // }
 
-    if (rules.custom && !rules.custom(value)) {
-      return "入力値が正しくありません";
-    }
+    // if (rules.custom && !rules.custom(value)) {
+    //   return t("invalidValue");
+    // }
 
     return undefined;
   };
@@ -105,12 +105,43 @@ export const useFormValidation = <T extends Record<string, any>>(
    * フォームの入力値を変更する
    * @param e イベント
    */
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | {
+          target: {
+            name: string;
+            value: string;
+            validationMessages?: string[];
+          };
+        }
+  ) => {
+    const target = e.target as {
+      name: string;
+      value: string;
+      validationMessages?: string[];
+    };
+    const { name, value, validationMessages } = target;
 
-    const error = validateField(name, value);
-    setErrors((prev) => ({ ...prev, [name]: error }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // カスタムバリデーションメッセージがある場合はそれを優先
+    if (validationMessages) {
+      console.log("validationMessage", validationMessages);
+      setErrors((prev) => ({
+        ...prev,
+        [name]: Array.isArray(validationMessages)
+          ? validationMessages[0] // 最初のエラーメッセージを表示
+          : validationMessages,
+      }));
+      return;
+    }
+
+    // 通常のバリデーション処理を実行
+    validateField(name, value);
   };
 
   /**

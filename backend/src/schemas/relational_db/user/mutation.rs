@@ -3,13 +3,17 @@ use crate::configs::storage::StorageClient;
 use crate::models::relational_db::user::{self, Entity as User};
 use crate::schemas::relational_db::user::types::*;
 use crate::utils::auth::{AuthTokens, AuthUtils};
+use crate::utils::validation::validator::Validator;
 use argon2::{
     password_hash::{rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
     Argon2,
 };
+use async_graphql::indexmap::IndexMap;
 use async_graphql::*;
+use async_graphql::{Name, Value};
 use jsonwebtoken::{encode, DecodingKey, EncodingKey, Header, Validation};
 use sea_orm::*;
+use std::collections::HashMap;
 use std::io::Read;
 use std::sync::Arc;
 use uuid::Uuid;
@@ -23,6 +27,61 @@ pub struct UserMutation;
 impl UserMutation {
     /// ユーザを作成
     async fn create_user(&self, ctx: &Context<'_>, input: CreateUserInput) -> Result<user::Model> {
+        let mut validation_errors = IndexMap::new();
+
+        // メールアドレスのバリデーション
+        if let Err(e) = Validator::validate_required(&input.email) {
+            validation_errors
+                .entry("email".to_string())
+                .or_insert_with(Vec::new)
+                .push(e.to_string());
+        } else if let Err(e) = Validator::validate_email(&input.email) {
+            validation_errors
+                .entry("email".to_string())
+                .or_insert_with(Vec::new)
+                .push(e.to_string());
+        }
+
+        // 名前のバリデーション
+        if let Err(e) = Validator::validate_required(&input.name) {
+            validation_errors
+                .entry("name".to_string())
+                .or_insert_with(Vec::new)
+                .push(e.to_string());
+        } else if let Err(e) = Validator::validate_name(&input.name) {
+            validation_errors
+                .entry("name".to_string())
+                .or_insert_with(Vec::new)
+                .push(e.to_string());
+        }
+
+        // パスワードのバリデーション
+        if let Err(e) = Validator::validate_required(&input.password) {
+            validation_errors
+                .entry("password".to_string())
+                .or_insert_with(Vec::new)
+                .push(e.to_string());
+        } else {
+            let errors = Validator::validate_password(&input.password);
+            if !errors.is_empty() {
+                validation_errors
+                    .entry("password".to_string())
+                    .or_insert_with(Vec::new)
+                    .extend(errors.into_iter().map(|e| e.to_string()));
+            }
+        }
+
+        if !validation_errors.is_empty() {
+            let errors: IndexMap<Name, Value> = validation_errors
+                .into_iter()
+                .map(|(k, v)| (Name::new(k), Value::from(v)))
+                .collect();
+
+            return Err(Error::new("Validation failed").extend_with(|_, e| {
+                e.set("validationErrors", errors);
+            }));
+        }
+
         let db = ctx.data::<DatabaseConnection>()?;
 
         // パスワードのハッシュ化
@@ -80,6 +139,43 @@ impl UserMutation {
 
     /// ログイン
     async fn login(&self, ctx: &Context<'_>, input: LoginInput) -> Result<LoginResponse> {
+        let mut validation_errors = HashMap::new();
+
+        // メールアドレスのバリデーション
+        if let Err(e) = Validator::validate_email(&input.email) {
+            validation_errors
+                .entry("email".to_string())
+                .or_insert_with(Vec::new)
+                .push(e.to_string());
+        }
+
+        // パスワードのバリデーション
+        if let Err(e) = Validator::validate_required(&input.password) {
+            validation_errors
+                .entry("password".to_string())
+                .or_insert_with(Vec::new)
+                .push(e.to_string());
+        } else {
+            let errors = Validator::validate_password(&input.password);
+            if !errors.is_empty() {
+                validation_errors
+                    .entry("password".to_string())
+                    .or_insert_with(Vec::new)
+                    .extend(errors.into_iter().map(|e| e.to_string()));
+            }
+        }
+
+        if !validation_errors.is_empty() {
+            let errors: IndexMap<Name, Value> = validation_errors
+                .into_iter()
+                .map(|(k, v)| (Name::new(k), Value::from(v)))
+                .collect();
+
+            return Err(Error::new("Validation failed").extend_with(|_, e| {
+                e.set("validationErrors", errors);
+            }));
+        }
+
         let db = ctx.data::<DatabaseConnection>()?;
         let env = ctx.data::<Arc<Env>>()?;
 

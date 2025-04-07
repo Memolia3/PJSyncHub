@@ -1,6 +1,7 @@
 import type {
   GraphQLRequestOptions,
   GraphQLRequestParams,
+  GraphQLRequestResult,
 } from "@/graphql/types/action.type";
 
 /**
@@ -35,7 +36,10 @@ export async function fetchGraphQL({
 
   const json = await res.json();
   if (json.errors) {
-    throw new Error(json.errors[0].message);
+    return {
+      data: null,
+      errors: json.errors,
+    };
   }
 
   return json;
@@ -59,14 +63,14 @@ export function fetchQuery(
 /**
  * ミューテーション実行用のヘルパー関数
  */
-export function fetchMutation(
+export async function fetchMutation<T>(
   mutation: string,
   variables?: Record<string, unknown>,
   options?: GraphQLRequestOptions
-) {
+): GraphQLRequestResult<T> {
   return fetchGraphQL({
     query: mutation,
     variables,
     options: { method: "POST", ...options },
-  });
+  }) as GraphQLRequestResult<T>;
 }

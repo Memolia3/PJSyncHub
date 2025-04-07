@@ -1,7 +1,5 @@
 import { useTranslations } from "next-intl";
 import { useFormValidation } from "./useFormValidation";
-import { useRouter } from "next/navigation";
-import { login } from "@/app/_actions/auth";
 import type { LoginCredentials } from "@/types/auth.type";
 
 // 初期データ

@@ -62,8 +62,28 @@ export default function LoginForm() {
       setIsLoading(true);
       const result = await login(formData);
 
+      if (result.validationErrors) {
+        Object.entries(result.validationErrors).forEach(([field, messages]) => {
+          setDirtyFields((prev) => ({
+            ...prev,
+            [field]: true,
+          }));
+
+          const customEvent = {
+            target: {
+              name: field,
+              value: formData[field as keyof typeof formData],
+              validationMessages: messages,
+            },
+          };
+
+          handleChange(customEvent);
+        });
+        return;
+      }
+
       if (result.error) {
-        console.error(result.error);
+        console.log("error", result.error);
         return;
       }
 
